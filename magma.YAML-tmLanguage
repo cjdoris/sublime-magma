@@ -168,7 +168,7 @@ repository:
 
   line_comment:
     comment: Line comments
-    match: '\/\/.*'
+    match: '\/\/.*$\n?'
     name: comment.line.double-slash.magma
 
   block_comment:

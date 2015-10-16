@@ -564,7 +564,7 @@
 			<key>comment</key>
 			<string>Line comments</string>
 			<key>match</key>
-			<string>\/\/.*</string>
+			<string>\/\/.*$\n?</string>
 			<key>name</key>
 			<string>comment.line.double-slash.magma</string>
 		</dict>
