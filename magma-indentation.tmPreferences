@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>Indentation rules</string>
+  <key>scope</key>
+  <string>source.magma</string>
+  <key>settings</key>
+  <dict>
+    <key>decreaseIndentPattern</key>
+    <string>^\s*(end\s+(if|while|case|try|function|intrinsic|procedure)\s*;|until\b.*;|else|elif\b.*\bthen|when\b.*:|catch\b.*)\s*$</string>
+    <key>increaseIndentPattern</key>
+    <string>^\s*((if|elif)\b.*\bthen|else|(function|procedure|intrinsic)\b.*|(for|while)\b.*\bdo|repeat|(when|case)\b.*:|catch\b.*|try)\s*$</string>
+  </dict>
+</dict>
+</plist>
