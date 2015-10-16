@@ -1,5 +1,0 @@
-<snippet>
-    <content><![CDATA[func<${1} | ${2}>]]></content>
-    <tabTrigger>func</tabTrigger>
-    <scope>source.magma</scope>
-</snippet>

@@ -1,8 +1,0 @@
-<snippet>
-    <content><![CDATA[while ${1:true} do
-  ${2}
-end while;
-]]></content>
-    <tabTrigger>while</tabTrigger>
-    <scope>source.magma</scope>
-</snippet>
