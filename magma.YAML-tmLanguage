@@ -275,7 +275,7 @@ repository:
 
   other_keyword:
     comment: Other keywords
-    match: '\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|where|is|delete|by|Self|freeze|quit|exit|import)\b'
+    match: '\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|where|is|delete|by|Self|freeze|quit|exit|import|assigned)\b'
     name: keyword.other.magma
 
   logical_operator_keyword:
