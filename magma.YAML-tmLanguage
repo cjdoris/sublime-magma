@@ -229,6 +229,30 @@ repository:
     patterns:
     - include: '#expression'
 
+  indexed_set:
+    begin: '{@'
+    end: '@}'
+    patterns:
+    - include: '#expression'
+
+  multi_set:
+    begin: '{\*'
+    end: '\*}'
+    patterns:
+    - include: '#expression'
+
+  expression_group:
+    patterns:
+    - include: '#indexed_set'
+    - include: '#multi_set'
+    - include: '#parens'
+    - include: '#brackets'
+    - include: '#braces'
+    - include: '#angles'
+
+  arrow:
+    match: '->|:->'
+
   string_literal:
     comment: Strings
     begin: '"'
@@ -344,7 +368,8 @@ repository:
   expression:
     patterns:
     - include: '#comment'
-    - include: '#parens'
+    - include: '#arrow'
+    - include: '#expression_group'
     - include: '#literal'
     - include: '#assignment_operator'
     - include: '#constructor'

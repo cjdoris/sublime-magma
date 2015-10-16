@@ -48,6 +48,11 @@
 			<key>name</key>
 			<string>keyword.operator.arithmetic.magma</string>
 		</dict>
+		<key>arrow</key>
+		<dict>
+			<key>match</key>
+			<string>-&gt;|:-&gt;</string>
+		</dict>
 		<key>assignment_operator</key>
 		<dict>
 			<key>captures</key>
@@ -239,7 +244,11 @@
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#parens</string>
+					<string>#arrow</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#expression_group</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -264,6 +273,36 @@
 				<dict>
 					<key>include</key>
 					<string>#constant</string>
+				</dict>
+			</array>
+		</dict>
+		<key>expression_group</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#indexed_set</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#multi_set</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#parens</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#brackets</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#braces</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#angles</string>
 				</dict>
 			</array>
 		</dict>
@@ -351,6 +390,20 @@
 				<dict>
 					<key>include</key>
 					<string>#paramname</string>
+				</dict>
+			</array>
+		</dict>
+		<key>indexed_set</key>
+		<dict>
+			<key>begin</key>
+			<string>{@</string>
+			<key>end</key>
+			<string>@}</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#expression</string>
 				</dict>
 			</array>
 		</dict>
@@ -602,6 +655,20 @@
 				<dict>
 					<key>include</key>
 					<string>#type</string>
+				</dict>
+			</array>
+		</dict>
+		<key>multi_set</key>
+		<dict>
+			<key>begin</key>
+			<string>{\*</string>
+			<key>end</key>
+			<string>\*}</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#expression</string>
 				</dict>
 			</array>
 		</dict>
