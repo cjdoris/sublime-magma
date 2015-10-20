@@ -1,6 +1,6 @@
 # [PackageDev] target_format: plist, ext: tmLanguage
 ---
-name: Magma
+name: MagmaDev
 scopeName: source.magma
 fileTypes: [magma, mag]
 uuid: 86b1670b-7756-4792-bdd1-1392d39d26a4
@@ -205,6 +205,27 @@ repository:
     - match: '[^"\\%]'
       name: string.quoted.double.magma
 
+  declare_type_statement:
+    match: '(\bdeclare\s+type)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?'
+    captures:
+      '1':
+        name: keyword.other.magma
+      '2':
+        name: entity.name.class.magma
+      '4':
+        name: entity.name.class.magma
+
+  declare_attributes_statement:
+    match: '(\bdeclare\s+attributes)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?'
+    captures:
+      '1':
+        name: keyword.other.magma
+      '2':
+        name: entity.name.class.magma
+      '4':
+        name: entity.name.class.magma
+
+
   parens:
     begin: '\('
     end: '\)'
@@ -275,7 +296,7 @@ repository:
 
   other_keyword:
     comment: Other keywords
-    match: '\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|where|is|delete|by|Self|freeze|quit|exit|import|assigned)\b'
+    match: '\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|where|is|delete|by|Self|freeze|quit|exit|import|assigned|declare|type|attributes)\b'
     name: keyword.other.magma
 
   logical_operator_keyword:
@@ -388,7 +409,7 @@ repository:
 
   control_keyword:
     comment: Control keywords
-    match: '\b(if|end if|else|then|for|while|end for|end while|do|return|break|continue|raise|assert|try|end try|catch|require|requirerange|requirege|error|repeat|until|case|when|end case|default)\b'
+    match: '\b(if|end\s+if|else|then|for|while|end\s+for|end\s+while|do|return|break|continue|raise|assert|try|end\s+try|catch|require|requirerange|requirege|error|repeat|until|case|when|end\s+case|default)\b'
     name: keyword.control.magma
 
   end_function_keyword:
@@ -403,6 +424,8 @@ repository:
   block:
     patterns:
     - include: '#printf_statement'
+    - include: '#declare_type_statement'
+    - include: '#declare_attributes_statement'
     - include: '#expression'
     - include: '#for_keyword'
     - include: '#control_keyword'

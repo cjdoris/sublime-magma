@@ -8,7 +8,7 @@
 		<string>mag</string>
 	</array>
 	<key>name</key>
-	<string>Magma</string>
+	<string>MagmaDev</string>
 	<key>patterns</key>
 	<array>
 		<dict>
@@ -80,6 +80,14 @@
 				<dict>
 					<key>include</key>
 					<string>#printf_statement</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#declare_type_statement</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#declare_attributes_statement</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -210,9 +218,55 @@
 			<key>comment</key>
 			<string>Control keywords</string>
 			<key>match</key>
-			<string>\b(if|end if|else|then|for|while|end for|end while|do|return|break|continue|raise|assert|try|end try|catch|require|requirerange|requirege|error|repeat|until|case|when|end case|default)\b</string>
+			<string>\b(if|end\s+if|else|then|for|while|end\s+for|end\s+while|do|return|break|continue|raise|assert|try|end\s+try|catch|require|requirerange|requirege|error|repeat|until|case|when|end\s+case|default)\b</string>
 			<key>name</key>
 			<string>keyword.control.magma</string>
+		</dict>
+		<key>declare_attributes_statement</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.other.magma</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.class.magma</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.class.magma</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(\bdeclare\s+attributes)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?</string>
+		</dict>
+		<key>declare_type_statement</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.other.magma</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.class.magma</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.class.magma</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(\bdeclare\s+type)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?</string>
 		</dict>
 		<key>end_function_keyword</key>
 		<dict>
@@ -732,7 +786,7 @@
 			<key>comment</key>
 			<string>Other keywords</string>
 			<key>match</key>
-			<string>\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|where|is|delete|by|Self|freeze|quit|exit|import|assigned)\b</string>
+			<string>\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|where|is|delete|by|Self|freeze|quit|exit|import|assigned|declare|type|attributes)\b</string>
 			<key>name</key>
 			<string>keyword.other.magma</string>
 		</dict>
