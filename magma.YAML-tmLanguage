@@ -1,6 +1,6 @@
 # [PackageDev] target_format: plist, ext: tmLanguage
 ---
-name: MagmaDev
+name: Magma
 scopeName: source.magma
 fileTypes: [magma, mag]
 uuid: 86b1670b-7756-4792-bdd1-1392d39d26a4
