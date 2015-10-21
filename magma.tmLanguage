@@ -839,7 +839,7 @@
 			<key>comment</key>
 			<string>Other keywords</string>
 			<key>match</key>
-			<string>\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|where|is|delete|by|Self|freeze|quit|exit|import|assigned|declare|type|attributes)\b</string>
+			<string>\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|where|is|delete|by|Self|freeze|quit|exit|import|assigned|declare|type|attributes|time|vtime)\b</string>
 			<key>name</key>
 			<string>keyword.other.magma</string>
 		</dict>
