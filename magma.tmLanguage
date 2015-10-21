@@ -224,7 +224,9 @@
 		</dict>
 		<key>declare_attributes_statement</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(\bdeclare\s+attributes)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?\s*:</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -242,31 +244,82 @@
 					<string>entity.name.class.magma</string>
 				</dict>
 			</dict>
-			<key>match</key>
-			<string>(\bdeclare\s+attributes)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?</string>
+			<key>end</key>
+			<string>;</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>\b[_A-Za-z][_A-Za-z0-9]*\b</string>
+					<key>name</key>
+					<string>variable.parameter.magma</string>
+				</dict>
+			</array>
 		</dict>
 		<key>declare_type_statement</key>
 		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
+			<key>patterns</key>
+			<array>
 				<dict>
-					<key>name</key>
-					<string>keyword.other.magma</string>
+					<key>begin</key>
+					<string>(\bdeclare\s+type)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?\s*:</string>
+					<key>beginCaptures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>keyword.other.magma</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>entity.name.class.magma</string>
+						</dict>
+						<key>4</key>
+						<dict>
+							<key>name</key>
+							<string>entity.name.class.magma</string>
+						</dict>
+					</dict>
+					<key>comment</key>
+					<string>Version with inheritances</string>
+					<key>end</key>
+					<string>;</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>match</key>
+							<string>\b[_A-Za-z][_A-Za-z0-9]*\b</string>
+							<key>name</key>
+							<string>entity.name.class.magma</string>
+						</dict>
+					</array>
 				</dict>
-				<key>2</key>
 				<dict>
-					<key>name</key>
-					<string>entity.name.class.magma</string>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>keyword.other.magma</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>entity.name.class.magma</string>
+						</dict>
+						<key>4</key>
+						<dict>
+							<key>name</key>
+							<string>entity.name.class.magma</string>
+						</dict>
+					</dict>
+					<key>comment</key>
+					<string>Simple version</string>
+					<key>match</key>
+					<string>(\bdeclare\s+type)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?</string>
 				</dict>
-				<key>4</key>
-				<dict>
-					<key>name</key>
-					<string>entity.name.class.magma</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>(\bdeclare\s+type)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?</string>
+			</array>
 		</dict>
 		<key>end_function_keyword</key>
 		<dict>

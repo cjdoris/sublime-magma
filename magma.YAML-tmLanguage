@@ -206,25 +206,43 @@ repository:
       name: string.quoted.double.magma
 
   declare_type_statement:
-    match: '(\bdeclare\s+type)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?'
-    captures:
-      '1':
-        name: keyword.other.magma
-      '2':
+    patterns:
+    - comment: Version with inheritances
+      begin: '(\bdeclare\s+type)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?\s*:'
+      end: ';'
+      beginCaptures:
+        '1':
+          name: keyword.other.magma
+        '2':
+          name: entity.name.class.magma
+        '4':
+          name: entity.name.class.magma
+      patterns:
+      - match: '\b[_A-Za-z][_A-Za-z0-9]*\b'
         name: entity.name.class.magma
-      '4':
-        name: entity.name.class.magma
+    - comment: Simple version
+      match: '(\bdeclare\s+type)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?'
+      captures:
+        '1':
+          name: keyword.other.magma
+        '2':
+          name: entity.name.class.magma
+        '4':
+          name: entity.name.class.magma
 
   declare_attributes_statement:
-    match: '(\bdeclare\s+attributes)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?'
-    captures:
+    begin: '(\bdeclare\s+attributes)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?\s*:'
+    end: ';'
+    beginCaptures:
       '1':
         name: keyword.other.magma
       '2':
         name: entity.name.class.magma
       '4':
         name: entity.name.class.magma
-
+    patterns:
+    - match: '\b[_A-Za-z][_A-Za-z0-9]*\b'
+      name: variable.parameter.magma
 
   parens:
     begin: '\('
