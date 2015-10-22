@@ -23,9 +23,9 @@
 		</dict>
 		<dict>
 			<key>comment</key>
-			<string>User error</string>
+			<string>Errors</string>
 			<key>match</key>
-			<string>^User error:.*</string>
+			<string>^(User|Runtime) error.*</string>
 			<key>name</key>
 			<string>invalid.illegal.magma</string>
 		</dict>

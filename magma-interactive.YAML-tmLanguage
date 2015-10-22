@@ -11,8 +11,8 @@ patterns:
     patterns:
     - include: 'source.magma'
 
-  - comment: User error
-    match: '^User error:.*'
+  - comment: Errors
+    match: '^(User|Runtime) error.*'
     name: invalid.illegal.magma
 
   - comment: Output
