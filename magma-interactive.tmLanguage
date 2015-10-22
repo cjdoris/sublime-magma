@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Magma Interactive</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>begin</key>
+			<string>^[a-z|]*&gt;\s+</string>
+			<key>comment</key>
+			<string>Highlight magma source after a prompt</string>
+			<key>end</key>
+			<string>$</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>source.magma</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>User error</string>
+			<key>match</key>
+			<string>^User error:.*</string>
+			<key>name</key>
+			<string>invalid.illegal.magma</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Output</string>
+			<key>match</key>
+			<string>^.*$</string>
+			<key>name</key>
+			<string>comment.line.magma</string>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>source.interactive.magma</string>
+	<key>uuid</key>
+	<string>0e4a86ff-1b3f-4489-987f-69b913594e89</string>
+</dict>
+</plist>

@@ -1,0 +1,21 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: Magma Interactive
+scopeName: source.interactive.magma
+uuid: 0e4a86ff-1b3f-4489-987f-69b913594e89
+
+patterns:
+  - comment: Highlight magma source after a prompt
+    begin: '^[a-z|]*>\s+'
+    end: '$'
+    patterns:
+    - include: 'source.magma'
+
+  - comment: User error
+    match: '^User error:.*'
+    name: invalid.illegal.magma
+
+  - comment: Output
+    match: '^.*$'
+    name: comment.line.magma
+...
