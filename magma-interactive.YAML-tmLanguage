@@ -12,13 +12,13 @@ patterns:
     - include: 'source.magma'
     beginCaptures:
       '0':
-        name: markup.heading.magma
+        name: interactive.prompt.magma
 
   - comment: Errors
     match: '^(User|Runtime) error.*'
-    name: invalid.illegal.magma
+    name: interactive.output.error.magam
 
   - comment: Output
     match: '^.*$'
-    name: comment.line.magma
+    name: interactive.output.magma
 ...

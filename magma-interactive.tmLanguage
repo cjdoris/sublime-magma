@@ -14,7 +14,7 @@
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>markup.heading.magma</string>
+					<string>interactive.prompt.magma</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -35,7 +35,7 @@
 			<key>match</key>
 			<string>^(User|Runtime) error.*</string>
 			<key>name</key>
-			<string>invalid.illegal.magma</string>
+			<string>interactive.output.error.magam</string>
 		</dict>
 		<dict>
 			<key>comment</key>
@@ -43,7 +43,7 @@
 			<key>match</key>
 			<string>^.*$</string>
 			<key>name</key>
-			<string>comment.line.magma</string>
+			<string>interactive.output.magma</string>
 		</dict>
 	</array>
 	<key>scopeName</key>
