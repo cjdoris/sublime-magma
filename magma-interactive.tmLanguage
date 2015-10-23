@@ -9,6 +9,14 @@
 		<dict>
 			<key>begin</key>
 			<string>^[a-z|]*&gt;\s+</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>markup.heading.magma</string>
+				</dict>
+			</dict>
 			<key>comment</key>
 			<string>Highlight magma source after a prompt</string>
 			<key>end</key>

@@ -10,6 +10,9 @@ patterns:
     end: '$'
     patterns:
     - include: 'source.magma'
+    beginCaptures:
+      '0':
+        name: markup.heading.magma
 
   - comment: Errors
     match: '^(User|Runtime) error.*'
