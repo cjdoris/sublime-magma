@@ -345,7 +345,7 @@ repository:
 
   assignment_operator:
     comment: Assignment operators
-    match: '([_A-Za-z][_A-Za-z0-9,<>\s]*)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))'
+    match: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s]*)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))'
     captures:
       '1':
         name: variable.other.magma

@@ -15,8 +15,12 @@ patterns:
         name: interactive.prompt.magma
 
   - comment: Errors
-    match: '^(User|Runtime) error.*'
-    name: interactive.output.error.magam
+    match: '^((User|Runtime) error:).*'
+    captures:
+      '0':
+        name: interactive.output.magma
+      '1':
+        name: interactive.output.error.magma
 
   - comment: Output
     match: '^.*$'

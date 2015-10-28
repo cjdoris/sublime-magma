@@ -30,12 +30,23 @@
 			</array>
 		</dict>
 		<dict>
+			<key>captures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>interactive.output.magma</string>
+				</dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>interactive.output.error.magma</string>
+				</dict>
+			</dict>
 			<key>comment</key>
 			<string>Errors</string>
 			<key>match</key>
-			<string>^(User|Runtime) error.*</string>
-			<key>name</key>
-			<string>interactive.output.error.magam</string>
+			<string>^((User|Runtime) error:).*</string>
 		</dict>
 		<dict>
 			<key>comment</key>
