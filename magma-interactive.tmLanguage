@@ -91,7 +91,7 @@
 			<key>comment</key>
 			<string>Errors</string>
 			<key>match</key>
-			<string>^((User|Runtime) error:).*</string>
+			<string>^((User|Runtime) error( in assert)?:).*</string>
 		</dict>
 		<dict>
 			<key>comment</key>

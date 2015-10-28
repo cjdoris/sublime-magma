@@ -35,7 +35,7 @@ patterns:
         name: interactive.prompt.magma
 
   - comment: Errors
-    match: '^((User|Runtime) error:).*'
+    match: '^((User|Runtime) error( in assert)?:).*'
     captures:
       '0':
         name: interactive.output.magma
