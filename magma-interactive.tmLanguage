@@ -8,6 +8,51 @@
 	<array>
 		<dict>
 			<key>begin</key>
+			<string>(?=^\?\?&gt; )</string>
+			<key>comment</key>
+			<string>The help browser</string>
+			<key>end</key>
+			<string>(?=^&gt; )</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>begin</key>
+					<string>^(\?\?&gt;)\s+(\?)?\s*(\b(esearch|osearch|isearch|numbers|ssearch|esearc|osearc|search|idelve|isearc|number|ssearc|edelve|odelve|unmark|sdelve|esear|iback|marks|osear|searc|ewalk|idelv|owalk|sfind|where|ifind|delve|isear|numbe|ssear|eback|iwalk|oback|swalk|edelv|odelv|sback|unmar|efind|ofind|sdelv|back|esea|ibac|mark|osea|sear|walk|ewal|idel|more|owal|sfin|wher|exit|ifin|next|prev|show|delv|find|isea|numb|ssea|ebac|goto|iwal|obac|quit|swal|edel|grep|odel|sbac|unma|efin|help|ofin|sdel|bac|ese|iba|mar|ose|sea|wal|cat|ewa|ide|mor|owa|sfi|whe|exi|ifi|nex|pre|sho|del|fin|ise|num|pwd|sse|eba|got|iwa|oba|qui|swa|ede|gre|ode|sba|unm|efi|hel|ofi|sde|ba|es|ib|ma|os|se|wa|ca|ew|id|mo|ow|sf|wh|cd|ex|if|ne|pr|sh|de|fi|is|nu|pw|ss|eb|go|iw|ob|qu|sw|ed|gr|ls|od|sb|un|ef|he|of|sd|up|b|e|i|m|o|s|w|c|n|p|d|f|g|q|l|u|h)\b)?</string>
+					<key>beginCaptures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>interactive.prompt.magma</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.separator.magma</string>
+						</dict>
+						<key>3</key>
+						<dict>
+							<key>name</key>
+							<string>keyword.other.magma</string>
+						</dict>
+					</dict>
+					<key>comment</key>
+					<string>The prompt</string>
+					<key>end</key>
+					<string>$</string>
+				</dict>
+				<dict>
+					<key>comment</key>
+					<string>Output</string>
+					<key>match</key>
+					<string>^.*$</string>
+					<key>name</key>
+					<string>interactive.output.magma</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
 			<string>^[a-z|]*&gt;\s+</string>
 			<key>beginCaptures</key>
 			<dict>
