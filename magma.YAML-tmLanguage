@@ -314,7 +314,7 @@ repository:
 
   other_keyword:
     comment: Other keywords
-    match: '\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|where|is|delete|by|Self|freeze|quit|exit|import|assigned|declare|type|attributes|time|vtime)\b'
+    match: '\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|else|where|is|delete|by|Self|freeze|quit|exit|import|assigned|declare|type|attributes|time|vtime)\b'
     name: keyword.other.magma
 
   logical_operator_keyword:
@@ -345,7 +345,7 @@ repository:
 
   assignment_operator:
     comment: Assignment operators
-    match: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s]*)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))'
+    match: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s`]*)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))'
     captures:
       '1':
         name: variable.other.magma
@@ -427,7 +427,7 @@ repository:
 
   control_keyword:
     comment: Control keywords
-    match: '\b(if|end\s+if|else|then|for|while|end\s+for|end\s+while|do|return|break|continue|raise|assert|assert2|assert3|try|end\s+try|catch|require|requirerange|requirege|error|repeat|until|case|when|end\s+case|default)\b'
+    match: '\b(if|end\s+if|else|elif|then|for|while|end\s+for|end\s+while|do|return|break|continue|raise|assert|assert2|assert3|try|end\s+try|catch|require|requirerange|requirege|error|repeat|until|case|when|end\s+case|default)\b'
     name: keyword.control.magma
 
   end_function_keyword:

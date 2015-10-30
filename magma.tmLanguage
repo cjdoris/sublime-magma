@@ -71,7 +71,7 @@
 			<key>comment</key>
 			<string>Assignment operators</string>
 			<key>match</key>
-			<string>([_A-Za-z][\[\]_A-Za-z0-9,&lt;&gt;\s]*)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))</string>
+			<string>([_A-Za-z][\[\]_A-Za-z0-9,&lt;&gt;\s`]*)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))</string>
 		</dict>
 		<key>block</key>
 		<dict>
@@ -218,7 +218,7 @@
 			<key>comment</key>
 			<string>Control keywords</string>
 			<key>match</key>
-			<string>\b(if|end\s+if|else|then|for|while|end\s+for|end\s+while|do|return|break|continue|raise|assert|assert2|assert3|try|end\s+try|catch|require|requirerange|requirege|error|repeat|until|case|when|end\s+case|default)\b</string>
+			<string>\b(if|end\s+if|else|elif|then|for|while|end\s+for|end\s+while|do|return|break|continue|raise|assert|assert2|assert3|try|end\s+try|catch|require|requirerange|requirege|error|repeat|until|case|when|end\s+case|default)\b</string>
 			<key>name</key>
 			<string>keyword.control.magma</string>
 		</dict>
@@ -839,7 +839,7 @@
 			<key>comment</key>
 			<string>Other keywords</string>
 			<key>match</key>
-			<string>\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|where|is|delete|by|Self|freeze|quit|exit|import|assigned|declare|type|attributes|time|vtime)\b</string>
+			<string>\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|else|where|is|delete|by|Self|freeze|quit|exit|import|assigned|declare|type|attributes|time|vtime)\b</string>
 			<key>name</key>
 			<string>keyword.other.magma</string>
 		</dict>
