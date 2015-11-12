@@ -71,7 +71,7 @@
 			<key>comment</key>
 			<string>Assignment statement</string>
 			<key>match</key>
-			<string>([_A-Za-z][\[\]_A-Za-z0-9,&lt;&gt;\s`]*)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))</string>
+			<string>([_A-Za-z][\[\]_A-Za-z0-9,&lt;&gt;\s`]*?)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))</string>
 		</dict>
 		<key>block</key>
 		<dict>
