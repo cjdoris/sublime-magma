@@ -53,7 +53,7 @@
 			<key>match</key>
 			<string>-&gt;|:-&gt;</string>
 		</dict>
-		<key>assignment_operator</key>
+		<key>assignment_statement</key>
 		<dict>
 			<key>captures</key>
 			<dict>
@@ -69,7 +69,7 @@
 				</dict>
 			</dict>
 			<key>comment</key>
-			<string>Assignment operators</string>
+			<string>Assignment statement</string>
 			<key>match</key>
 			<string>([_A-Za-z][\[\]_A-Za-z0-9,&lt;&gt;\s`]*)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))</string>
 		</dict>
@@ -77,6 +77,10 @@
 		<dict>
 			<key>patterns</key>
 			<array>
+				<dict>
+					<key>include</key>
+					<string>#assignment_statement</string>
+				</dict>
 				<dict>
 					<key>include</key>
 					<string>#printf_statement</string>
@@ -88,10 +92,6 @@
 				<dict>
 					<key>include</key>
 					<string>#declare_attributes_statement</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#expression</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -112,6 +112,10 @@
 				<dict>
 					<key>include</key>
 					<string>#function_keyword</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#expression</string>
 				</dict>
 			</array>
 		</dict>
@@ -363,10 +367,6 @@
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#assignment_operator</string>
-				</dict>
-				<dict>
-					<key>include</key>
 					<string>#constructor</string>
 				</dict>
 				<dict>
@@ -387,6 +387,10 @@
 		<dict>
 			<key>patterns</key>
 			<array>
+				<dict>
+					<key>include</key>
+					<string>#function_call</string>
+				</dict>
 				<dict>
 					<key>include</key>
 					<string>#indexed_set</string>
@@ -454,6 +458,44 @@
 					<string>[_A-Za-z][_A-Za-z0-9]*</string>
 					<key>name</key>
 					<string>variable.parameter.magma</string>
+				</dict>
+			</array>
+		</dict>
+		<key>function_call</key>
+		<dict>
+			<key>begin</key>
+			<string>[_A-Za-z][_A-Za-z0-9]*\s*\(</string>
+			<key>end</key>
+			<string>\)</string>
+			<key>name</key>
+			<string>meta.function-call.magma</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#function_call_params</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#expression</string>
+				</dict>
+			</array>
+		</dict>
+		<key>function_call_params</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>variable.parameter.function.magma</string>
+						</dict>
+					</dict>
+					<key>match</key>
+					<string>([_A-Za-z][_A-Za-z0-9]*)\s*(:=)</string>
 				</dict>
 			</array>
 		</dict>
@@ -793,10 +835,6 @@
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#assignment_operator</string>
-				</dict>
-				<dict>
-					<key>include</key>
 					<string>#other_operator</string>
 				</dict>
 			</array>
@@ -848,7 +886,7 @@
 			<key>comment</key>
 			<string>Other operators</string>
 			<key>match</key>
-			<string>#|&amp;|`|!|@|@@|\.|\.\.|\.\.\.</string>
+			<string>#|&amp;|`|!|@|@@|\.|\.\.|\.\.\.|~</string>
 			<key>name</key>
 			<string>keyword.operator.other.magma</string>
 		</dict>

@@ -244,6 +244,20 @@ repository:
     - match: '\b[_A-Za-z][_A-Za-z0-9]*\b'
       name: variable.parameter.magma
 
+  function_call:
+    begin: '[_A-Za-z][_A-Za-z0-9]*\s*\('
+    end: '\)'
+    name: meta.function-call.magma
+    patterns:
+    - include: '#function_call_params'
+    - include: '#expression'
+
+  function_call_params:
+    patterns:
+    - match: '([_A-Za-z][_A-Za-z0-9]*)\s*(:=)'
+      captures:
+        '1': {name: variable.parameter.function.magma}
+
   parens:
     begin: '\('
     end: '\)'
@@ -282,6 +296,7 @@ repository:
 
   expression_group:
     patterns:
+    - include: '#function_call'
     - include: '#indexed_set'
     - include: '#multi_set'
     - include: '#parens'
@@ -343,8 +358,8 @@ repository:
     match: '\+|-|/|\*|\^'
     name: keyword.operator.arithmetic.magma
 
-  assignment_operator:
-    comment: Assignment operators
+  assignment_statement:
+    comment: Assignment statement
     match: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s`]*)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))'
     captures:
       '1':
@@ -354,14 +369,13 @@ repository:
 
   other_operator:
     comment: Other operators
-    match: '#|&|`|!|@|@@|\.|\.\.|\.\.\.'
+    match: '#|&|`|!|@|@@|\.|\.\.|\.\.\.|~'
     name: keyword.operator.other.magma
 
   operator:
     patterns:
     - include: '#operator_keyword'
     - include: '#arithmetic_operator'
-    - include: '#assignment_operator'
     - include: '#other_operator'
 
   constant:
@@ -410,7 +424,6 @@ repository:
     - include: '#arrow'
     - include: '#expression_group'
     - include: '#literal'
-    - include: '#assignment_operator'
     - include: '#constructor'
     - include: '#other_keyword'
     - include: '#operator'
@@ -441,13 +454,14 @@ repository:
 
   block:
     patterns:
+    - include: '#assignment_statement'
     - include: '#printf_statement'
     - include: '#declare_type_statement'
     - include: '#declare_attributes_statement'
-    - include: '#expression'
     - include: '#for_keyword'
     - include: '#control_keyword'
     - include: '#end_function_keyword'
     - include: '#intrinsic_keyword'
     - include: '#function_keyword'
+    - include: '#expression'
 ...
