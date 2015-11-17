@@ -11,7 +11,7 @@
     <key>decreaseIndentPattern</key>
     <string>^\s*(end\s+(if|for|while|case|try|function|intrinsic|procedure)\s*;|until\b.*;|else|elif\b.*\bthen|when\b.*:|catch\b.*)\s*$</string>
     <key>increaseIndentPattern</key>
-    <string>^\s*((if|elif)\b.*\bthen|else|(function|procedure|intrinsic)\b.*|(for|while)\b.*\bdo|repeat|(when|case)\b.*:|catch\b.*|try)\s*$</string>
+    <string>^\s*((if|elif)\b.*\bthen|else|(function|procedure|intrinsic)\b.*|(for|while)\b.*\bdo|repeat|(when|case)\b.*:|catch\b.*|try|.*:=\s*(function|procedure)\s*\(.*\))\s*$</string>
   </dict>
 </dict>
 </plist>

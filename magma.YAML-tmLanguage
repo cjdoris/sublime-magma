@@ -11,7 +11,7 @@ patterns:
 repository:
   function_keyword:
     comment: Function definition keywords
-    begin: '\b(function|procedure)\b\s*([_A-Za-z][_A-Za-z0-9]*)\b\s*'
+    begin: '\b(function|procedure)\b\s*([_A-Za-z][_A-Za-z0-9]*)?\b\s*'
     end: '(?!\s*(\())(?=.)\s*'
     captures:
       '1':
@@ -329,7 +329,12 @@ repository:
 
   other_keyword:
     comment: Other keywords
-    match: '\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|else|where|is|delete|by|Self|freeze|quit|exit|import|assigned|declare|type|attributes|time|vtime)\b'
+    match: '\b(exists|forall|rep|random|select|else|where|is|by|Self|assigned)\b'
+    name: keyword.other.magma
+
+  other_statement_keyword:
+    comment: Other statement-level keywords
+    match: '\b(load|print|printf|fprintf|vprint|vprintf|delete|freeze|quit|exit|import|declare|type|attributes|time|vtime)\b'
     name: keyword.other.magma
 
   logical_operator_keyword:
@@ -454,7 +459,6 @@ repository:
 
   block:
     patterns:
-    - include: '#assignment_statement'
     - include: '#printf_statement'
     - include: '#declare_type_statement'
     - include: '#declare_attributes_statement'
@@ -463,5 +467,7 @@ repository:
     - include: '#end_function_keyword'
     - include: '#intrinsic_keyword'
     - include: '#function_keyword'
+    - include: '#other_statement_keyword'
+    - include: '#assignment_statement'
     - include: '#expression'
 ...

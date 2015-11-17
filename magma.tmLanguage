@@ -79,10 +79,6 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>#assignment_statement</string>
-				</dict>
-				<dict>
-					<key>include</key>
 					<string>#printf_statement</string>
 				</dict>
 				<dict>
@@ -112,6 +108,14 @@
 				<dict>
 					<key>include</key>
 					<string>#function_keyword</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#other_statement_keyword</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#assignment_statement</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -502,7 +506,7 @@
 		<key>function_keyword</key>
 		<dict>
 			<key>begin</key>
-			<string>\b(function|procedure)\b\s*([_A-Za-z][_A-Za-z0-9]*)\b\s*</string>
+			<string>\b(function|procedure)\b\s*([_A-Za-z][_A-Za-z0-9]*)?\b\s*</string>
 			<key>captures</key>
 			<dict>
 				<key>1</key>
@@ -877,7 +881,7 @@
 			<key>comment</key>
 			<string>Other keywords</string>
 			<key>match</key>
-			<string>\b(load|print|printf|fprintf|vprint|vprintf|exists|forall|rep|random|select|else|where|is|delete|by|Self|freeze|quit|exit|import|assigned|declare|type|attributes|time|vtime)\b</string>
+			<string>\b(exists|forall|rep|random|select|else|where|is|by|Self|assigned)\b</string>
 			<key>name</key>
 			<string>keyword.other.magma</string>
 		</dict>
@@ -898,6 +902,15 @@
 			<string>\b(div|cat|meet|join|diff|sdiff|mod)\b</string>
 			<key>name</key>
 			<string>keyword.operator.other.magma</string>
+		</dict>
+		<key>other_statement_keyword</key>
+		<dict>
+			<key>comment</key>
+			<string>Other statement-level keywords</string>
+			<key>match</key>
+			<string>\b(load|print|printf|fprintf|vprint|vprintf|delete|freeze|quit|exit|import|declare|type|attributes|time|vtime)\b</string>
+			<key>name</key>
+			<string>keyword.other.magma</string>
 		</dict>
 		<key>paramname</key>
 		<dict>
