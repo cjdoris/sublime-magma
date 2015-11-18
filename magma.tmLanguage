@@ -363,10 +363,6 @@
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#expression_group</string>
-				</dict>
-				<dict>
-					<key>include</key>
 					<string>#literal</string>
 				</dict>
 				<dict>
@@ -384,6 +380,10 @@
 				<dict>
 					<key>include</key>
 					<string>#constant</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#expression_group</string>
 				</dict>
 			</array>
 		</dict>
@@ -429,6 +429,11 @@
 				<dict>
 					<key>name</key>
 					<string>keyword.control.magma</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>variable.other.magma</string>
 				</dict>
 				<key>3</key>
 				<dict>

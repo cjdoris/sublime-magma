@@ -427,12 +427,12 @@ repository:
     patterns:
     - include: '#comment'
     - include: '#arrow'
-    - include: '#expression_group'
     - include: '#literal'
     - include: '#constructor'
     - include: '#other_keyword'
     - include: '#operator'
     - include: '#constant'
+    - include: '#expression_group'
 
   for_keyword:
     comment: Keyword "for"
@@ -440,6 +440,8 @@ repository:
     captures:
       '1':
         name: keyword.control.magma
+      '2':
+        name: variable.other.magma
       '3':
         name: keyword.control.magma
 
