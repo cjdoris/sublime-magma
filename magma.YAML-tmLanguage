@@ -257,6 +257,10 @@ repository:
     - match: '([_A-Za-z][_A-Za-z0-9]*)\s*(:=)'
       captures:
         '1': {name: variable.parameter.function.magma}
+    - match: '(~)\s*([_A-Za-z][_A-Za-z0-9]*)'
+      captures:
+        '1': {name: keyword.operator.other.magma}
+        '2': {name: variable.other.magma}
 
   parens:
     begin: '\('
@@ -268,30 +272,41 @@ repository:
     begin: '\['
     end: '\]'
     patterns:
-    - include: '#expression'
+    - include: '#set_builder_expression'
 
   braces:
     begin: '{'
     end: '}'
     patterns:
-    - include: '#expression'
+    - include: '#set_builder_expression'
 
   angles:
     begin: '<'
     end: '>'
     patterns:
-    - include: '#expression'
+    - include: '#set_builder_expression'
 
   indexed_set:
     begin: '{@'
     end: '@}'
     patterns:
-    - include: '#expression'
+    - include: '#set_builder_expression'
 
   multi_set:
     begin: '{\*'
     end: '\*}'
     patterns:
+    - include: '#set_builder_expression'
+
+  set_builder_quantifier:
+    match: '[:,]\s*([_A-Za-z][_A-Za-z0-9]*)\s+(in)\b'
+    captures:
+      '1': {name: variable.other.magma}
+      '2': {name: keyword.control.magma}
+
+  set_builder_expression:
+    patterns:
+    - include: '#set_builder_quantifier'
     - include: '#expression'
 
   expression_group:

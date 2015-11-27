@@ -28,7 +28,7 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>#expression</string>
+					<string>#set_builder_expression</string>
 				</dict>
 			</array>
 		</dict>
@@ -144,7 +144,7 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>#expression</string>
+					<string>#set_builder_expression</string>
 				</dict>
 			</array>
 		</dict>
@@ -158,7 +158,7 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>#expression</string>
+					<string>#set_builder_expression</string>
 				</dict>
 			</array>
 		</dict>
@@ -506,6 +506,23 @@
 					<key>match</key>
 					<string>([_A-Za-z][_A-Za-z0-9]*)\s*(:=)</string>
 				</dict>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>keyword.operator.other.magma</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>variable.other.magma</string>
+						</dict>
+					</dict>
+					<key>match</key>
+					<string>(~)\s*([_A-Za-z][_A-Za-z0-9]*)</string>
+				</dict>
 			</array>
 		</dict>
 		<key>function_keyword</key>
@@ -561,7 +578,7 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>#expression</string>
+					<string>#set_builder_expression</string>
 				</dict>
 			</array>
 		</dict>
@@ -826,7 +843,7 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>#expression</string>
+					<string>#set_builder_expression</string>
 				</dict>
 			</array>
 		</dict>
@@ -1029,6 +1046,38 @@
 					<string>#type</string>
 				</dict>
 			</array>
+		</dict>
+		<key>set_builder_expression</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#set_builder_quantifier</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#expression</string>
+				</dict>
+			</array>
+		</dict>
+		<key>set_builder_quantifier</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>variable.other.magma</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.control.magma</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>[:,]\s*([_A-Za-z][_A-Za-z0-9]*)\s+(in)\b</string>
 		</dict>
 		<key>set_type</key>
 		<dict>
