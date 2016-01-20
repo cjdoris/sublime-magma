@@ -29,7 +29,7 @@ repository:
 
   intrinsic_keyword:
     comment: intrinsics
-    begin: '\b(intrinsic)\s+([_A-Za-z][_A-Za-z0-9]*)\b\s*'
+    begin: \b(intrinsic)\s+([_A-Za-z][_A-Za-z0-9]*\b|'[^']+')\s*
     end: '(?!\s*(\(|{|->|:))(?=.)\s*'
     beginCaptures:
       '1':
@@ -322,6 +322,10 @@ repository:
   arrow:
     match: '->|:->'
 
+  symbol_literal:
+    match: \'[^']*\'
+    name: constant.language.magma
+
   string_literal:
     comment: Strings
     begin: '"'
@@ -340,6 +344,7 @@ repository:
   literal:
     patterns:
     - include: '#string_literal'
+    - include: '#symbol_literal'
     - include: '#integer_literal'
 
   other_keyword:
@@ -367,6 +372,15 @@ repository:
     match: '\b(div|cat|meet|join|diff|sdiff|mod)\b'
     name: keyword.operator.other.magma
 
+  where_keyword:
+    comment: Where keyword
+    match: '\b(where)\s+([_A-Za-z][_A-Za-z0-9]*)(\s+(is)|\s*(:=))'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: variable.other.magma}
+      '4': {name: keyword.other.magma}
+      '5': {name: keyword.operator.assignment.magma}
+
   operator_keyword:
     patterns:
     - include: '#logical_operator_keyword'
@@ -380,12 +394,16 @@ repository:
 
   assignment_statement:
     comment: Assignment statement
-    match: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s`]*?)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))'
-    captures:
+    # match: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s`]*?)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))'
+    begin: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s`]*?)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))'
+    end: ';'
+    beginCaptures:
       '1':
         name: variable.other.magma
       '2':
         name: keyword.operator.assignment.magma
+    patterns:
+    - include: '#expression'
 
   other_operator:
     comment: Other operators
@@ -444,6 +462,7 @@ repository:
     - include: '#arrow'
     - include: '#literal'
     - include: '#constructor'
+    - include: '#where_keyword'
     - include: '#other_keyword'
     - include: '#operator'
     - include: '#constant'
@@ -451,18 +470,20 @@ repository:
 
   for_keyword:
     comment: Keyword "for"
-    match: '\b(for)\s+([_A-Za-z][_A-Za-z0-9]*)\s+(in)\b'
+    match: '\b(for)\s+([_A-Za-z][_A-Za-z0-9]*)(\s+(in)\b|\s*(:=))'
     captures:
       '1':
         name: keyword.control.magma
       '2':
         name: variable.other.magma
-      '3':
+      '4':
         name: keyword.control.magma
+      '5':
+        name: keyword.operator.assignment.magma
 
   control_keyword:
     comment: Control keywords
-    match: '\b(if|end\s+if|else|elif|then|for|while|end\s+for|end\s+while|do|return|break|continue|raise|assert|assert2|assert3|try|end\s+try|catch|require|requirerange|requirege|error|repeat|until|case|when|end\s+case|default)\b'
+    match: '\b(if|end\s+if|else|elif|then|for|by|to|while|end\s+for|end\s+while|do|return|break|continue|raise|assert|assert2|assert3|try|end\s+try|catch|require|requirerange|requirege|error|repeat|until|case|when|end\s+case|default)\b'
     name: keyword.control.magma
 
   end_function_keyword:
