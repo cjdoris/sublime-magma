@@ -183,7 +183,7 @@ repository:
     - include: '#block_comment'
 
   printf_statement:
-    begin: '\b((f?printf)|(Sprintf\()|((vprintf)\b.*:))\s*(")'
+    begin: '\b((f?printf)|(Sprintf\()|((vprintf)\s+([_A-Za-z][_A-Za-z0-9]*)\b(\s*,\s*([0-9]+)\b)?.*:))\s*(")'
     end: '"'
     beginCaptures:
       '2':
@@ -191,6 +191,10 @@ repository:
       '5':
         name: keyword.other.magma
       '6':
+        name: entity.name.class.magma
+      '8':
+        name: constant.numeric.magma
+      '9':
         name: string.quoted.double.magma
     endCaptures:
       '0':
@@ -204,6 +208,12 @@ repository:
       name: invalid.illegal.magma
     - match: '[^"\\%]'
       name: string.quoted.double.magma
+
+  vprint_statement:
+    match: '\b(vprintf?)\s+([_A-Za-z][_A-Za-z0-9]*)\b'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: entity.name.class.magma}
 
   declare_type_statement:
     patterns:
@@ -243,6 +253,13 @@ repository:
     patterns:
     - match: '\b[_A-Za-z][_A-Za-z0-9]*\b'
       name: variable.parameter.magma
+
+  declare_verbose_statement:
+    match: '(\bdeclare\s+verbose)(\s+([_A-Za-z][_A-Za-z0-9]*)\b(\s*,\s*([0-9]+)\b(\s*;)?)?)?'
+    captures:
+      '1': {name: keyword.other.magma}
+      '3': {name: entity.name.class.magma}
+      '5': {name: constant.numeric.magma}
 
   function_call:
     begin: '[_A-Za-z][_A-Za-z0-9]*\s*\('
@@ -336,16 +353,16 @@ repository:
       name: constant.character.escape.magma
     - match: '[^"\\]'
    
-  integer_literal: 
+  number_literal: 
     comment: Numbers
-    match: '\b([0-9]+|[0-9]+\.[0-9]+)\b'
+    match: '\b([0-9]+)(\.[0-9]+)?([eE]-?[0-9]+)?\b'
     name: constant.numeric.magma
 
   literal:
     patterns:
     - include: '#string_literal'
     - include: '#symbol_literal'
-    - include: '#integer_literal'
+    - include: '#number_literal'
 
   other_keyword:
     comment: Other keywords
@@ -354,7 +371,7 @@ repository:
 
   other_statement_keyword:
     comment: Other statement-level keywords
-    match: '\b(load|print|printf|fprintf|vprint|vprintf|delete|freeze|quit|exit|import|declare|type|attributes|time|vtime)\b'
+    match: '\b(load|print|printf|fprintf|vprint|vprintf|delete|freeze|quit|exit|import|declare|type|attributes|verbose|time|vtime)\b'
     name: keyword.other.magma
 
   logical_operator_keyword:
@@ -498,8 +515,10 @@ repository:
   block:
     patterns:
     - include: '#printf_statement'
+    - include: '#vprint_statement'
     - include: '#declare_type_statement'
     - include: '#declare_attributes_statement'
+    - include: '#declare_verbose_statement'
     - include: '#for_keyword'
     - include: '#control_keyword'
     - include: '#end_function_keyword'

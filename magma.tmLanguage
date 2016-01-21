@@ -92,11 +92,19 @@
 				</dict>
 				<dict>
 					<key>include</key>
+					<string>#vprint_statement</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#declare_type_statement</string>
 				</dict>
 				<dict>
 					<key>include</key>
 					<string>#declare_attributes_statement</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#declare_verbose_statement</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -337,6 +345,29 @@
 					<string>(\bdeclare\s+type)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?</string>
 				</dict>
 			</array>
+		</dict>
+		<key>declare_verbose_statement</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.other.magma</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.class.magma</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>constant.numeric.magma</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(\bdeclare\s+verbose)(\s+([_A-Za-z][_A-Za-z0-9]*)\b(\s*,\s*([0-9]+)\b(\s*;)?)?)?</string>
 		</dict>
 		<key>end_function_keyword</key>
 		<dict>
@@ -600,15 +631,6 @@
 				</dict>
 			</array>
 		</dict>
-		<key>integer_literal</key>
-		<dict>
-			<key>comment</key>
-			<string>Numbers</string>
-			<key>match</key>
-			<string>\b([0-9]+|[0-9]+\.[0-9]+)\b</string>
-			<key>name</key>
-			<string>constant.numeric.magma</string>
-		</dict>
 		<key>intrinsic_docstring</key>
 		<dict>
 			<key>begin</key>
@@ -828,7 +850,7 @@
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#integer_literal</string>
+					<string>#number_literal</string>
 				</dict>
 			</array>
 		</dict>
@@ -868,6 +890,15 @@
 					<string>#set_builder_expression</string>
 				</dict>
 			</array>
+		</dict>
+		<key>number_literal</key>
+		<dict>
+			<key>comment</key>
+			<string>Numbers</string>
+			<key>match</key>
+			<string>\b([0-9]+)(\.[0-9]+)?([eE]-?[0-9]+)?\b</string>
+			<key>name</key>
+			<string>constant.numeric.magma</string>
 		</dict>
 		<key>operator</key>
 		<dict>
@@ -952,7 +983,7 @@
 			<key>comment</key>
 			<string>Other statement-level keywords</string>
 			<key>match</key>
-			<string>\b(load|print|printf|fprintf|vprint|vprintf|delete|freeze|quit|exit|import|declare|type|attributes|time|vtime)\b</string>
+			<string>\b(load|print|printf|fprintf|vprint|vprintf|delete|freeze|quit|exit|import|declare|type|attributes|verbose|time|vtime)\b</string>
 			<key>name</key>
 			<string>keyword.other.magma</string>
 		</dict>
@@ -980,7 +1011,7 @@
 		<key>printf_statement</key>
 		<dict>
 			<key>begin</key>
-			<string>\b((f?printf)|(Sprintf\()|((vprintf)\b.*:))\s*(")</string>
+			<string>\b((f?printf)|(Sprintf\()|((vprintf)\s+([_A-Za-z][_A-Za-z0-9]*)\b(\s*,\s*([0-9]+)\b)?.*:))\s*(")</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>2</key>
@@ -994,6 +1025,16 @@
 					<string>keyword.other.magma</string>
 				</dict>
 				<key>6</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.class.magma</string>
+				</dict>
+				<key>8</key>
+				<dict>
+					<key>name</key>
+					<string>constant.numeric.magma</string>
+				</dict>
+				<key>9</key>
 				<dict>
 					<key>name</key>
 					<string>string.quoted.double.magma</string>
@@ -1244,6 +1285,24 @@
 					<string>#tuple_type</string>
 				</dict>
 			</array>
+		</dict>
+		<key>vprint_statement</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.other.magma</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.class.magma</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>\b(vprintf?)\s+([_A-Za-z][_A-Za-z0-9]*)\b</string>
 		</dict>
 		<key>where_keyword</key>
 		<dict>
