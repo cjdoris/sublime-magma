@@ -956,7 +956,7 @@
 			<key>comment</key>
 			<string>Numbers</string>
 			<key>match</key>
-			<string>\b([0-9]+)(\.[0-9]+)?([eE]-?[0-9]+)?\b</string>
+			<string>\b([0-9]+)(\.[0-9]+)?([eE][-+]?[0-9]+)?([pP][0-9]+)?\b</string>
 			<key>name</key>
 			<string>constant.numeric.magma</string>
 		</dict>
