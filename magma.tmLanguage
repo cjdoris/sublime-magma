@@ -51,7 +51,9 @@
 		<key>arrow</key>
 		<dict>
 			<key>match</key>
-			<string>-&gt;|:-&gt;</string>
+			<string>-&gt;</string>
+			<key>name</key>
+			<string>keyword.operator.magma</string>
 		</dict>
 		<key>assignment_statement</key>
 		<dict>
@@ -237,15 +239,15 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>#constructor_bits</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#record_constructor</string>
-				</dict>
-				<dict>
-					<key>include</key>
 					<string>#func_constructor</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#rec_constructor</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#recformat_constructor</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -253,10 +255,41 @@
 				</dict>
 			</array>
 		</dict>
-		<key>constructor_bits</key>
+		<key>constructor_args</key>
 		<dict>
-			<key>match</key>
-			<string>-&gt;|:-&gt;</string>
+			<key>begin</key>
+			<string>&lt;\s*</string>
+			<key>end</key>
+			<string>(?=\|\s*)|&gt;\s*</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#arrow</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#expression</string>
+				</dict>
+			</array>
+		</dict>
+		<key>constructor_body</key>
+		<dict>
+			<key>begin</key>
+			<string>\|\s*</string>
+			<key>end</key>
+			<string>&gt;\s*</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#mapsto</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#expression</string>
+				</dict>
+			</array>
 		</dict>
 		<key>control_keyword</key>
 		<dict>
@@ -419,10 +452,6 @@
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#arrow</string>
-				</dict>
-				<dict>
-					<key>include</key>
 					<string>#literal</string>
 				</dict>
 				<dict>
@@ -540,7 +569,7 @@
 		<key>func_constructor</key>
 		<dict>
 			<key>begin</key>
-			<string>\b(func|proc)\s*&lt;</string>
+			<string>\b(func|proc)\s*(?=&lt;)</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -550,14 +579,30 @@
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>\|</string>
+			<string>(?!\s*(&lt;|\|))(?=.)\s*</string>
 			<key>patterns</key>
 			<array>
 				<dict>
-					<key>match</key>
-					<string>[_A-Za-z][_A-Za-z0-9]*</string>
-					<key>name</key>
-					<string>variable.parameter.magma</string>
+					<key>include</key>
+					<string>#func_constructor_args</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#constructor_body</string>
+				</dict>
+			</array>
+		</dict>
+		<key>func_constructor_args</key>
+		<dict>
+			<key>begin</key>
+			<string>&lt;\s*</string>
+			<key>end</key>
+			<string>(?=\|\s*)|&gt;\s*</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#paramname</string>
 				</dict>
 			</array>
 		</dict>
@@ -636,12 +681,16 @@
 			<key>comment</key>
 			<string>Function definition keywords</string>
 			<key>end</key>
-			<string>(?!\s*(\())(?=.)\s*</string>
+			<string>(?!\s*(\(|:))(?=.)\s*</string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>include</key>
 					<string>#function_params</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#optparams</string>
 				</dict>
 			</array>
 		</dict>
@@ -650,7 +699,7 @@
 			<key>begin</key>
 			<string>\(\s*</string>
 			<key>end</key>
-			<string>\)\s*</string>
+			<string>\)\s*|(?=:)\s*</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -714,38 +763,19 @@
 			<array>
 				<dict>
 					<key>include</key>
-					<string>#intrinsic_params_return_docstring</string>
-				</dict>
-			</array>
-		</dict>
-		<key>intrinsic_optparam</key>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>variable.parameter.magma</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>\b([_A-Za-z][_A-Za-z0-9]*)\s*:=</string>
-		</dict>
-		<key>intrinsic_optparams</key>
-		<dict>
-			<key>begin</key>
-			<string>:\s*</string>
-			<key>end</key>
-			<string>\)\s*</string>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>include</key>
-					<string>#intrinsic_optparam</string>
+					<string>#intrinsic_params</string>
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#expression</string>
+					<string>#optparams</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#intrinsic_returntypes</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#intrinsic_docstring</string>
 				</dict>
 			</array>
 		</dict>
@@ -754,7 +784,7 @@
 			<key>begin</key>
 			<string>\(\s*</string>
 			<key>end</key>
-			<string>\)\s*|(?=:)</string>
+			<string>\)\s*|(?=:)\s*</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -768,28 +798,6 @@
 				<dict>
 					<key>include</key>
 					<string>#paramname</string>
-				</dict>
-			</array>
-		</dict>
-		<key>intrinsic_params_return_docstring</key>
-		<dict>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>include</key>
-					<string>#intrinsic_params</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#intrinsic_optparams</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#intrinsic_returntypes</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#intrinsic_docstring</string>
 				</dict>
 			</array>
 		</dict>
@@ -923,6 +931,24 @@
 			<key>name</key>
 			<string>keyword.operator.bool.logical.magma</string>
 		</dict>
+		<key>mapsto</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.magma</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.operator.magma</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>([_A-Za-z][_A-Za-z0-9]*)?\s*(:?-&gt;)</string>
+		</dict>
 		<key>mset_type</key>
 		<dict>
 			<key>begin</key>
@@ -996,9 +1022,42 @@
 				</dict>
 			</array>
 		</dict>
-		<key>other_constructor</key>
+		<key>optparam</key>
 		<dict>
 			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.magma</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>\b([_A-Za-z][_A-Za-z0-9]*)\s*:=</string>
+		</dict>
+		<key>optparams</key>
+		<dict>
+			<key>begin</key>
+			<string>:\s*</string>
+			<key>end</key>
+			<string>\)\s*</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#optparam</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#expression</string>
+				</dict>
+			</array>
+		</dict>
+		<key>other_constructor</key>
+		<dict>
+			<key>begin</key>
+			<string>\b([_A-Za-z]+)\s*(?=&lt;)</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -1008,8 +1067,19 @@
 			</dict>
 			<key>comment</key>
 			<string>Constructors</string>
-			<key>match</key>
-			<string>\b([_A-Za-z]+)&lt;</string>
+			<key>end</key>
+			<string>(?!\s*(&lt;|\|))(?=.)\s*</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#constructor_args</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#constructor_body</string>
+				</dict>
+			</array>
 		</dict>
 		<key>other_keyword</key>
 		<dict>
@@ -1169,23 +1239,171 @@
 			<key>match</key>
 			<string>\b(readi?)\s+([_A-Za-z][_A-Za-z0-9]*)\b</string>
 		</dict>
-		<key>record_constructor</key>
+		<key>rec_constructor</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>\b(rec)\s*(?=&lt;)</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
 					<string>keyword.other.magma</string>
 				</dict>
-				<key>2</key>
+			</dict>
+			<key>end</key>
+			<string>(?!\s*(&lt;|\|))(?=.)\s*</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#rec_constructor_args</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#rec_constructor_body</string>
+				</dict>
+			</array>
+		</dict>
+		<key>rec_constructor_args</key>
+		<dict>
+			<key>begin</key>
+			<string>(?=&lt;)</string>
+			<key>end</key>
+			<string>(?=\|\s*)|&gt;\s*</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>entity.name.class.magma</string>
+						</dict>
+					</dict>
+					<key>match</key>
+					<string>&lt;\s*([_A-Za-z][_A-Za-z0-9]*)\s*(?=\||&gt;|$)</string>
+				</dict>
+				<dict>
+					<key>begin</key>
+					<string>&lt;</string>
+					<key>end</key>
+					<string>(?=\||&gt;)</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>include</key>
+							<string>#expression</string>
+						</dict>
+					</array>
+				</dict>
+			</array>
+		</dict>
+		<key>rec_constructor_body</key>
+		<dict>
+			<key>begin</key>
+			<string>\|\s*</string>
+			<key>end</key>
+			<string>&gt;\s*</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#comment</string>
+				</dict>
+				<dict>
+					<key>begin</key>
+					<string>\b([_A-Za-z][_A-Za-z0-9]*)\s*(:=)</string>
+					<key>beginCaptures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>variable.parameter.magma</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>keyword.operator.magma</string>
+						</dict>
+					</dict>
+					<key>end</key>
+					<string>(?=$|,|&gt;)</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>include</key>
+							<string>#expression</string>
+						</dict>
+					</array>
+				</dict>
+			</array>
+		</dict>
+		<key>recformat_constructor</key>
+		<dict>
+			<key>begin</key>
+			<string>\b(recformat)\s*(?=&lt;)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>entity.name.class.magma</string>
+					<string>keyword.other.magma</string>
 				</dict>
 			</dict>
-			<key>match</key>
-			<string>\b(rec)\s*&lt;\s*([_A-Za-z][_A-Za-z0-9]*)\b</string>
+			<key>end</key>
+			<string>(?!\s*(&lt;|\|))(?=.)\s*</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#recformat_constructor_args</string>
+				</dict>
+			</array>
+		</dict>
+		<key>recformat_constructor_args</key>
+		<dict>
+			<key>begin</key>
+			<string>&lt;\s*</string>
+			<key>end</key>
+			<string>&gt;\s*</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#comment</string>
+				</dict>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>entity.name.class.magma</string>
+						</dict>
+					</dict>
+					<key>match</key>
+					<string>\b([_A-Za-z][_A-Za-z0-9]*)\s*:\s*([_A-Za-z][_A-Za-z0-9]*)\s*(?=$|,|&gt;|//|/\*)</string>
+				</dict>
+				<dict>
+					<key>begin</key>
+					<string>\b([_A-Za-z][_A-Za-z0-9]*)\s*:</string>
+					<key>end</key>
+					<string>(?=$|,|&gt;)</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>include</key>
+							<string>#expression</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>\b([_A-Za-z][_A-Za-z0-9]*)\s*(?=$|,|&gt;|//|/*)</string>
+				</dict>
+			</array>
 		</dict>
 		<key>sequence_type</key>
 		<dict>
