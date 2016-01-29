@@ -25,6 +25,68 @@ patterns:
         match: '^.*$'
         name: interactive.output.magma
 
+  - comment: The debugger
+    begin: '(?=^debug> )'
+    end: '(?=^> )'
+    patterns:
+    
+      - comment: A prompt line
+        begin: '^(debug>) '
+        end: '$'
+        beginCaptures:
+          '1': {name: interactive.prompt.magma}
+        patterns:
+        
+          - comment: Backtrace command
+            match: '(?<=debug> )\s*(bt|backtrace)\b\s*'
+            captures:
+              '1': {name: keyword.other.magma}
+
+          - comment: Frame command
+            match: '(?<=debug> )\s*(f|frame)\b(\s+[0-9]+)?\s*'
+            captures:
+              '1': {name: keyword.other.magma}
+              '2': {name: constant.numeric.magma}
+
+          - comment: List command
+            match: '(?<=debug> )\s*(l|list)\b(\s+[0-9]+\b)?\s*'
+            captures:
+              '1': {name: keyword.other.magma}
+              '2': {name: constant.numeric.magma}
+
+          - comment: Print command
+            begin: '(?<=debug> )\s*(p|print)\b\s*'
+            end: '$'
+            captures:
+              '1': {name: keyword.other.magma}
+            patterns:
+            - include: 'source.magma'
+
+          - comment: Identifiers/help/quit command
+            match: '(?<=debug> )\s*(id|identifiers|h|help|q|quit)\b\s*'
+            captures:
+              '1': {name: keyword.other.magma}
+
+          - comment: Anything else
+            match: '.*$'
+            name: invalid.illegal.magma
+
+      - comment: Unknown command error
+        match: '^Unknown command.*'
+        name: interactive.output.error.magma
+
+      - comment: User error
+        match: '^((User|Runtime) error[^*]*:).*'
+        captures:
+          '0':
+            name: interactive.output.magma
+          '1':
+            name: interactive.output.error.magma
+
+      - comment: Output
+        match: '^.*$'
+        name: interactive.output.magma
+
   - comment: Highlight magma source after a prompt
     begin: '^[a-z|]*>\s+'
     end: '$'
