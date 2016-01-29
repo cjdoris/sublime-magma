@@ -29,7 +29,7 @@ repository:
 
   intrinsic_keyword:
     comment: intrinsics
-    begin: '\b(intrinsic)\s+([_A-Za-z][_A-Za-z0-9]*)\b\s*'
+    begin: \b(intrinsic)\s+([_A-Za-z][_A-Za-z0-9]*\b|'[^']+')\s*
     end: '(?!\s*(\(|{|->|:))(?=.)\s*'
     beginCaptures:
       '1':
@@ -182,8 +182,13 @@ repository:
     - include: '#line_comment'
     - include: '#block_comment'
 
+  syscall_statement:
+    match: '(%!)(.*)$'
+    captures:
+      '1': {name: keyword.other.magma}
+
   printf_statement:
-    begin: '\b((f?printf)|(Sprintf\()|((vprintf)\b.*:))\s*(")'
+    begin: '\b((printf)|(Sprintf\()|((vprintf)\s+([_A-Za-z][_A-Za-z0-9]*)\b(\s*,\s*([0-9]+)\b)?.*:))\s*(")'
     end: '"'
     beginCaptures:
       '2':
@@ -191,6 +196,10 @@ repository:
       '5':
         name: keyword.other.magma
       '6':
+        name: entity.name.class.magma
+      '8':
+        name: constant.numeric.magma
+      '9':
         name: string.quoted.double.magma
     endCaptures:
       '0':
@@ -204,6 +213,36 @@ repository:
       name: invalid.illegal.magma
     - match: '[^"\\%]'
       name: string.quoted.double.magma
+
+  vtime_statement:
+    match: '\b(vtime)\s+([_A-Za-z][_A-Za-z0-9]*)\b'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: entity.name.class.magma}
+
+  vprint_statement:
+    match: '\b(vprintf?)\s+([_A-Za-z][_A-Za-z0-9]*)\b'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: entity.name.class.magma}
+
+  read_statement:
+    match: '\b(readi?)\s+([_A-Za-z][_A-Za-z0-9]*)\b'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: variable.other.magma}
+
+  local_statement:
+    match: '\b(local)\s+([_A-Za-z][_A-Za-z0-9]*)\b'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: variable.other.magma}
+
+  forward_statement:
+    match: '\b(forward)\s+([_A-Za-z][_A-Za-z0-9]*)\b'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: entity.name.function.magma}
 
   declare_type_statement:
     patterns:
@@ -243,6 +282,13 @@ repository:
     patterns:
     - match: '\b[_A-Za-z][_A-Za-z0-9]*\b'
       name: variable.parameter.magma
+
+  declare_verbose_statement:
+    match: '(\bdeclare\s+verbose)(\s+([_A-Za-z][_A-Za-z0-9]*)\b(\s*,\s*([0-9]+)\b(\s*;)?)?)?'
+    captures:
+      '1': {name: keyword.other.magma}
+      '3': {name: entity.name.class.magma}
+      '5': {name: constant.numeric.magma}
 
   function_call:
     begin: '[_A-Za-z][_A-Za-z0-9]*\s*\('
@@ -322,6 +368,10 @@ repository:
   arrow:
     match: '->|:->'
 
+  symbol_literal:
+    match: \'[^']*\'
+    name: constant.language.magma
+
   string_literal:
     comment: Strings
     begin: '"'
@@ -332,40 +382,55 @@ repository:
       name: constant.character.escape.magma
     - match: '[^"\\]'
    
-  integer_literal: 
+  number_literal: 
     comment: Numbers
-    match: '\b([0-9]+|[0-9]+\.[0-9]+)\b'
+    match: '\b([0-9]+)(\.[0-9]+)?([eE][-+]?[0-9]+)?([pP][0-9]+)?\b'
     name: constant.numeric.magma
 
   literal:
     patterns:
     - include: '#string_literal'
-    - include: '#integer_literal'
+    - include: '#symbol_literal'
+    - include: '#number_literal'
 
   other_keyword:
     comment: Other keywords
     match: '\b(exists|forall|rep|random|select|else|where|is|by|Self|assigned)\b'
     name: keyword.other.magma
 
+  print_levels_keyword:
+    match: '(:)\s*(Default|Minimal|Maximal|Magma)\b'
+    captures:
+      '2': {name: keyword.other.magma}
+
   other_statement_keyword:
     comment: Other statement-level keywords
-    match: '\b(load|print|printf|fprintf|vprint|vprintf|delete|freeze|quit|exit|import|declare|type|attributes|time|vtime)\b'
+    match: '\b(load|print|printf|fprintf|vprint|vprintf|delete|clear|freeze|quit|exit|import|declare|type|attributes|verbose|time|vtime|read|readi|load|iload|save|restore|local|forward)\b'
     name: keyword.other.magma
 
   logical_operator_keyword:
     comment: Logical operator keywords
-    match: '\b(and|not|or)\b'
+    match: '\b(and|not|or|xor)\b'
     name: keyword.operator.bool.logical.magma
 
   comparison_operator_keyword:
     comment: Comparison operator keywords
-    match: '\b(le|lt|ge|gt|eq|ne|cmpeq|cmpne|in|notin|subset|notsubset)\b'
+    match: '\b(le|lt|ge|gt|eq|ne|cmpeq|cmpne|in|notin|subset|notsubset|adj|notadj)\b'
     name: keyword.operator.comparison.magma
 
   other_operator_keyword:
     comment: Other operator keywords
     match: '\b(div|cat|meet|join|diff|sdiff|mod)\b'
     name: keyword.operator.other.magma
+
+  where_keyword:
+    comment: Where keyword
+    match: '\b(where)\s+([_A-Za-z][_A-Za-z0-9]*)(\s+(is)|\s*(:=))'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: variable.other.magma}
+      '4': {name: keyword.other.magma}
+      '5': {name: keyword.operator.assignment.magma}
 
   operator_keyword:
     patterns:
@@ -380,12 +445,16 @@ repository:
 
   assignment_statement:
     comment: Assignment statement
-    match: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s`]*?)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))'
-    captures:
+    # match: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s`]*?)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))'
+    begin: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s`]*?)?\s*((\b(div|cat|meet|join|mod|or|and|xor)|(\+|-|/|\*|^)|)(:=))'
+    end: ';'
+    beginCaptures:
       '1':
         name: variable.other.magma
       '2':
         name: keyword.operator.assignment.magma
+    patterns:
+    - include: '#expression'
 
   other_operator:
     comment: Other operators
@@ -444,6 +513,8 @@ repository:
     - include: '#arrow'
     - include: '#literal'
     - include: '#constructor'
+    - include: '#where_keyword'
+    - include: '#print_levels_keyword'
     - include: '#other_keyword'
     - include: '#operator'
     - include: '#constant'
@@ -451,18 +522,20 @@ repository:
 
   for_keyword:
     comment: Keyword "for"
-    match: '\b(for)\s+([_A-Za-z][_A-Za-z0-9]*)\s+(in)\b'
+    match: '\b(for)\s+([_A-Za-z][_A-Za-z0-9]*)(\s+(in)\b|\s*(:=))'
     captures:
       '1':
         name: keyword.control.magma
       '2':
         name: variable.other.magma
-      '3':
+      '4':
         name: keyword.control.magma
+      '5':
+        name: keyword.operator.assignment.magma
 
   control_keyword:
     comment: Control keywords
-    match: '\b(if|end\s+if|else|elif|then|for|while|end\s+for|end\s+while|do|return|break|continue|raise|assert|assert2|assert3|try|end\s+try|catch|require|requirerange|requirege|error|repeat|until|case|when|end\s+case|default)\b'
+    match: '\b(if|end\s+if|else|elif|then|for|by|to|while|end\s+for|end\s+while|do|return|break|continue|raise|assert|assert2|assert3|try|end\s+try|catch|require|requirerange|requirege|error|repeat|until|case|when|end\s+case|default)\b'
     name: keyword.control.magma
 
   end_function_keyword:
@@ -476,9 +549,16 @@ repository:
 
   block:
     patterns:
+    - include: '#syscall_statement'
     - include: '#printf_statement'
+    - include: '#read_statement'
+    - include: '#local_statement'
+    - include: '#forward_statement'
+    - include: '#vprint_statement'
+    - include: '#vtime_statement'
     - include: '#declare_type_statement'
     - include: '#declare_attributes_statement'
+    - include: '#declare_verbose_statement'
     - include: '#for_keyword'
     - include: '#control_keyword'
     - include: '#end_function_keyword'

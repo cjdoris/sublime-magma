@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>spec</string>
+	</array>
+	<key>name</key>
+	<string>Magma Spec</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>begin</key>
+			<string>\{</string>
+			<key>end</key>
+			<string>\}</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#items</string>
+				</dict>
+			</array>
+		</dict>
+	</array>
+	<key>repository</key>
+	<dict>
+		<key>directory</key>
+		<dict>
+			<key>begin</key>
+			<string>([^ {}]+)\b\s*\{</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.class.magma.spec</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>\}</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#items</string>
+				</dict>
+			</array>
+		</dict>
+		<key>file</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.magma.spec</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>([^ {}]+)</string>
+		</dict>
+		<key>items</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#directory</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#link</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#file</string>
+				</dict>
+			</array>
+		</dict>
+		<key>link</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.other.magma.spec</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.function.magma.spec</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(\+)\s*([^ {}]+)</string>
+		</dict>
+	</dict>
+	<key>scopeName</key>
+	<string>source.magma.spec</string>
+	<key>uuid</key>
+	<string>39aa633c-e4c0-460f-84c7-a392bddb18c9</string>
+</dict>
+</plist>
