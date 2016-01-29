@@ -327,7 +327,7 @@ repository:
     begin: '<'
     end: '>'
     patterns:
-    - include: '#set_builder_expression'
+    - include: '#expression'
 
   indexed_set:
     begin: '{@'
