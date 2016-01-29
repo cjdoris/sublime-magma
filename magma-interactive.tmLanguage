@@ -13,6 +13,8 @@
 			<string>The help browser</string>
 			<key>end</key>
 			<string>(?=^&gt; )</string>
+			<key>name</key>
+			<string>source.interactive.magma.help</string>
 			<key>patterns</key>
 			<array>
 				<dict>
@@ -23,17 +25,17 @@
 						<key>1</key>
 						<dict>
 							<key>name</key>
-							<string>interactive.prompt.magma</string>
+							<string>interactive.prompt.magma.help</string>
 						</dict>
 						<key>2</key>
 						<dict>
 							<key>name</key>
-							<string>punctuation.separator.magma</string>
+							<string>punctuation.separator.magma.help</string>
 						</dict>
 						<key>3</key>
 						<dict>
 							<key>name</key>
-							<string>keyword.other.magma</string>
+							<string>keyword.other.magma.help</string>
 						</dict>
 					</dict>
 					<key>comment</key>
@@ -47,7 +49,7 @@
 					<key>match</key>
 					<string>^.*$</string>
 					<key>name</key>
-					<string>interactive.output.magma</string>
+					<string>interactive.output.magma.help</string>
 				</dict>
 			</array>
 		</dict>
@@ -68,13 +70,15 @@
 						<key>1</key>
 						<dict>
 							<key>name</key>
-							<string>interactive.prompt.magma</string>
+							<string>interactive.prompt.magma.debug</string>
 						</dict>
 					</dict>
 					<key>comment</key>
 					<string>A prompt line</string>
 					<key>end</key>
 					<string>$</string>
+					<key>name</key>
+					<string>source.interactive.magma.debug</string>
 					<key>patterns</key>
 					<array>
 						<dict>
@@ -83,7 +87,7 @@
 								<key>1</key>
 								<dict>
 									<key>name</key>
-									<string>keyword.other.magma</string>
+									<string>keyword.other.magma.debug</string>
 								</dict>
 							</dict>
 							<key>comment</key>
@@ -97,12 +101,12 @@
 								<key>1</key>
 								<dict>
 									<key>name</key>
-									<string>keyword.other.magma</string>
+									<string>keyword.other.magma.debug</string>
 								</dict>
 								<key>2</key>
 								<dict>
 									<key>name</key>
-									<string>constant.numeric.magma</string>
+									<string>constant.numeric.magma.debug</string>
 								</dict>
 							</dict>
 							<key>comment</key>
@@ -116,12 +120,12 @@
 								<key>1</key>
 								<dict>
 									<key>name</key>
-									<string>keyword.other.magma</string>
+									<string>keyword.other.magma.debug</string>
 								</dict>
 								<key>2</key>
 								<dict>
 									<key>name</key>
-									<string>constant.numeric.magma</string>
+									<string>constant.numeric.magma.debug</string>
 								</dict>
 							</dict>
 							<key>comment</key>
@@ -137,7 +141,7 @@
 								<key>1</key>
 								<dict>
 									<key>name</key>
-									<string>keyword.other.magma</string>
+									<string>keyword.other.magma.debug</string>
 								</dict>
 							</dict>
 							<key>comment</key>
@@ -158,7 +162,7 @@
 								<key>1</key>
 								<dict>
 									<key>name</key>
-									<string>keyword.other.magma</string>
+									<string>keyword.other.magma.debug</string>
 								</dict>
 							</dict>
 							<key>comment</key>
@@ -172,7 +176,7 @@
 							<key>match</key>
 							<string>.*$</string>
 							<key>name</key>
-							<string>invalid.illegal.magma</string>
+							<string>invalid.illegal.magma.debug</string>
 						</dict>
 					</array>
 				</dict>
@@ -182,7 +186,7 @@
 					<key>match</key>
 					<string>^Unknown command.*</string>
 					<key>name</key>
-					<string>interactive.output.error.magma</string>
+					<string>interactive.output.error.magma.debug</string>
 				</dict>
 				<dict>
 					<key>captures</key>
@@ -190,12 +194,12 @@
 						<key>0</key>
 						<dict>
 							<key>name</key>
-							<string>interactive.output.magma</string>
+							<string>interactive.output.magma.debug</string>
 						</dict>
 						<key>1</key>
 						<dict>
 							<key>name</key>
-							<string>interactive.output.error.magma</string>
+							<string>interactive.output.error.magma.debug</string>
 						</dict>
 					</dict>
 					<key>comment</key>
@@ -209,7 +213,7 @@
 					<key>match</key>
 					<string>^.*$</string>
 					<key>name</key>
-					<string>interactive.output.magma</string>
+					<string>interactive.output.magma.debug</string>
 				</dict>
 			</array>
 		</dict>

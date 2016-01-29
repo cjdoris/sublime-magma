@@ -8,6 +8,7 @@ patterns:
   - comment: The help browser
     begin: '(?=^\?\?> )'
     end: '(?=^> )'
+    name: source.interactive.magma.help
     patterns:
 
       - comment: The prompt
@@ -15,15 +16,15 @@ patterns:
         end: '$'
         beginCaptures:
           '1':
-            name: interactive.prompt.magma
+            name: interactive.prompt.magma.help
           '2':
-            name: punctuation.separator.magma
+            name: punctuation.separator.magma.help
           '3':
-            name: keyword.other.magma
+            name: keyword.other.magma.help
 
       - comment: Output
         match: '^.*$'
-        name: interactive.output.magma
+        name: interactive.output.magma.help
 
   - comment: The debugger
     begin: '(?=^debug> )'
@@ -33,59 +34,60 @@ patterns:
       - comment: A prompt line
         begin: '^(debug>) '
         end: '$'
+        name: source.interactive.magma.debug
         beginCaptures:
-          '1': {name: interactive.prompt.magma}
+          '1': {name: interactive.prompt.magma.debug}
         patterns:
         
           - comment: Backtrace command
             match: '(?<=debug> )\s*(bt|backtrace)\b\s*'
             captures:
-              '1': {name: keyword.other.magma}
+              '1': {name: keyword.other.magma.debug}
 
           - comment: Frame command
             match: '(?<=debug> )\s*(f|frame)\b(\s+[0-9]+)?\s*'
             captures:
-              '1': {name: keyword.other.magma}
-              '2': {name: constant.numeric.magma}
+              '1': {name: keyword.other.magma.debug}
+              '2': {name: constant.numeric.magma.debug}
 
           - comment: List command
             match: '(?<=debug> )\s*(l|list)\b(\s+[0-9]+\b)?\s*'
             captures:
-              '1': {name: keyword.other.magma}
-              '2': {name: constant.numeric.magma}
+              '1': {name: keyword.other.magma.debug}
+              '2': {name: constant.numeric.magma.debug}
 
           - comment: Print command
             begin: '(?<=debug> )\s*(p|print)\b\s*'
             end: '$'
             captures:
-              '1': {name: keyword.other.magma}
+              '1': {name: keyword.other.magma.debug}
             patterns:
             - include: 'source.magma'
 
           - comment: Identifiers/help/quit command
             match: '(?<=debug> )\s*(id|identifiers|h|help|q|quit)\b\s*'
             captures:
-              '1': {name: keyword.other.magma}
+              '1': {name: keyword.other.magma.debug}
 
           - comment: Anything else
             match: '.*$'
-            name: invalid.illegal.magma
+            name: invalid.illegal.magma.debug
 
       - comment: Unknown command error
         match: '^Unknown command.*'
-        name: interactive.output.error.magma
+        name: interactive.output.error.magma.debug
 
       - comment: User error
         match: '^((User|Runtime) error[^*]*:).*'
         captures:
           '0':
-            name: interactive.output.magma
+            name: interactive.output.magma.debug
           '1':
-            name: interactive.output.error.magma
+            name: interactive.output.error.magma.debug
 
       - comment: Output
         match: '^.*$'
-        name: interactive.output.magma
+        name: interactive.output.magma.debug
 
   - comment: Highlight magma source after a prompt
     begin: '^[a-z|]*>\s+'
