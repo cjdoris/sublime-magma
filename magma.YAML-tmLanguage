@@ -405,7 +405,7 @@ repository:
 
   other_statement_keyword:
     comment: Other statement-level keywords
-    match: '\b(load|print|printf|fprintf|vprint|vprintf|delete|clear|freeze|quit|exit|import|declare|type|attributes|verbose|time|vtime|read|readi|load|iload|save|restore|local|forward)\b'
+    match: '\b(load|print|printf|fprintf|vprint|vprintf|delete|clear|freeze|quit|exit|import|declare|type|attributes|verbose|time|vtime|read|readi|load|iload|save|restore|local|forward|eval)\b'
     name: keyword.other.magma
 
   logical_operator_keyword:

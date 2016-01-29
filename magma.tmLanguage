@@ -1043,7 +1043,7 @@
 			<key>comment</key>
 			<string>Other statement-level keywords</string>
 			<key>match</key>
-			<string>\b(load|print|printf|fprintf|vprint|vprintf|delete|clear|freeze|quit|exit|import|declare|type|attributes|verbose|time|vtime|read|readi|load|iload|save|restore|local|forward)\b</string>
+			<string>\b(load|print|printf|fprintf|vprint|vprintf|delete|clear|freeze|quit|exit|import|declare|type|attributes|verbose|time|vtime|read|readi|load|iload|save|restore|local|forward|eval)\b</string>
 			<key>name</key>
 			<string>keyword.other.magma</string>
 		</dict>
