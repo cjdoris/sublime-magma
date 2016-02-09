@@ -1,0 +1,220 @@
+%YAML 1.2
+---
+name: Magma (experimental)
+file_extensions: [magma, mag]
+scope: source.magma
+
+variables:
+  escape_char: \\.
+  format_char: '%[-]?[0-9]*(\.[0-9]*)?[oOmh]|%\*[oOmh]|%%'
+  bad_format_char: '%'
+  identifier: '[a-zA-Z_][a-zA-Z_0-9]*'
+
+contexts:
+
+  # MAIN
+
+  main:
+    - include: statement
+
+  statement:
+    - include: print_statement
+    - include: printf_statement
+    - include: if_statement
+    - include: while_statement
+    - include: repeat_statement
+    - include: expression
+
+  expression:
+    - include: literal
+    - include: logical_operator
+    - include: comparison_operator
+    - include: other_operator
+    - include: identifier
+
+  literal:
+    - include: string_literal
+    - include: number_literal
+    - include: symbol_literal
+    - include: boolean_literal
+
+  # UTILS
+
+  illegal:
+    - match: '.'
+      scope: invalid.illegal.magma
+
+  string_chars:
+    - match: '{{escape_char}}'
+      scope: constant.character.escape.magma
+    - match: '{{format_char}}'
+      scope: constant.character.escape.magma
+
+  format_string_chars:
+    - include: string_chars
+    - match: '{{bad_format_char}}'
+      scope: invalid.illegal.magma
+
+  # PROTOTYPE
+
+  prototype:
+    - include: space
+
+  space:
+    - include: comment
+    - include: whitespace
+
+  comment:
+    - include: line_comment
+    - include: block_comment
+
+  whitespace:
+    - match: \s+
+
+  line_comment:
+    - match: //.*
+      scope: comment.line.magma
+
+  block_comment:
+    - match: /\*
+      push:
+        - meta_scope: comment.block.magma
+        - match: \*/
+          pop: true
+
+  # LITERALS
+
+  string_literal:
+    - match: '"'
+      push:
+        - meta_scope: string.quoted.double.magma
+        - include: string_chars
+        - match: '"'
+          pop: true
+
+  number_literal:
+    - match: '[+-]?\b([0-9]+)(\.[0-9]+)?([eE][-+]?[0-9]+)?([pP][0-9]+)?\b'
+      scope: constant.numeric.magma
+
+  symbol_literal:
+    - match: "'[^']*'"
+      scope: constant.language.symbol.magma
+
+  boolean_literal:
+    - match: '\b(true|false)\b'
+      scope: constant.language.boolean.magma
+
+  # IDENTIFIER
+
+  identifier:
+    - match: '{{identifier}}'
+      scope: identifier.magma
+
+  # PRINT
+
+  print_statement:
+    - match: '\bprint\b'
+      scope: keyword.other.magma
+      push: expression_list_statement_POP
+
+  # PRINTF
+
+  printf_statement:
+    - match: '\bprintf\b'
+      scope: keyword.other.magma
+      push:
+        - expression_list_statement_POP
+        - REQ_format_string_literal_POP
+
+  expression_list_statement_POP:
+    - include: expression
+    - match: ';'
+      pop: true
+
+  REQ_format_string_literal_POP:
+    - match: '"'
+      set:
+        - meta_scope: string.quoted.double.magma
+        - include: format_string_chars
+        - match: '"'
+          pop: true
+    - match: illegal
+
+  # IF
+
+  if_statement:
+    - match: '\bif\b'
+      scope: keyword.other.magma
+      push:
+        - if_body_POP
+        - if_then_POP
+
+  if_then_POP:
+    - match: '\bthen\b'
+      scope: keyword.other.magma
+      pop: true
+    - include: expression
+
+  if_body_POP:
+    - match: '\belif\b'
+      scope: keyword.other.magma
+      push:
+        - if_body_POP
+        - if_then_POP
+    - match: '\belse\b'
+      scope: keyword.other.magma
+      push: if_body_POP
+    - match: '\b(end\s+if)\s*;'
+      captures:
+        1: keyword.other.magma
+      pop: true
+    - include: statement
+
+  # WHILE
+
+  while_statement:
+    - match: '\bwhile\b'
+      scope: keyword.other.magma
+      push:
+        - while_body_POP
+        - while_do_POP
+
+  while_do_POP:
+    - match: '\bdo\b'
+      scope: keyword.other.magma
+      pop: true
+
+  while_body_POP:
+    - match: '\b(end\s+while)\s*;'
+      captures:
+        1: keyword.other.magma
+      pop: true
+    - include: statement
+
+  # REPEAT
+
+  repeat_statement:
+    - match: '\brepeat\b'
+      scope: keyword.other.magma
+      push:
+        - match: '\buntil\b'
+          scope: 'keyword.other.magma'
+          set: expression_statement_POP
+        - include: statement
+
+  expression_statement_POP:
+    - match: ';'
+      pop: true
+    - include: expression
+
+  logical_operator:
+    - match: '\b(and|not|or|xor)\b'
+      scope: keyword.operator.bool.logical.magma
+
+  comparison_operator:
+    - match: '\b(le|lt|ge|gt|eq|ne|cmpeq|cmpne|in|notin|subset|notsubset|adj|notadj)\b'
+      scope: keyword.operator.comparison.magma
+
+  other_operator:
+    - match: '\b(div|cat|meet|join|diff|sdiff|mod)\b'
+      scope: keyword.operator.other.magma

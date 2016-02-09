@@ -1,0 +1,81 @@
+/// SYNTAX TEST "Packages/Magma/magma-experimental.sublime-syntax"
+
+// Comments
+/// <- comment.line.magma
+///       ^ comment.line.magma
+
+/* block comment */
+/// <- comment.block.magma
+///               ^ comment.block.magma
+
+-124378478e-12p4;
+/// <- constant.numeric.magma
+///            ^ constant.numeric.magma
+///             ^ - constant
+
+"hello there\nx = %o";
+/// <- string.quoted.double.magma
+///         ^ constant.character.escape.magma
+///               ^ constant.character.escape.magma
+///                 ^ string
+///                  ^ - string
+
+'foo';
+/// <- constant.language.symbol.magma
+
+hello;
+/// <- identifier.magma
+
+NumberField;
+/// <- identifier.magma
+
+true or false and 12 eq 7;
+/// <- constant.language.boolean
+///  ^ keyword.operator.bool.logical
+///     ^ constant.language.boolean
+///           ^ keyword.operator.bool.logical
+///                  ^ keyword.operator.comparison.magma
+
+print "hello";
+/// <- keyword.other.magma
+
+printf "% stuff%o%12o\n", 12; print "hi";
+/// <- keyword.other.magma
+///    ^ string
+///     ^ invalid.illegal
+///            ^ constant.character.escape
+///              ^ constant.character.escape
+///                   ^ constant.character.escape
+///                    ^ string
+///                     ^ -string
+///                           ^ keyword.other.magma
+
+if foo then
+/// <- keyword.other.magma
+///    ^ keyword.other.magma
+  12;
+elif false then
+/// <- keyword.other.magma
+///  ^ constant.language.boolean
+///        ^ keyword.other.magma
+  14;
+else
+/// <- keyword.other.magma
+  13;
+end if;
+/// <- keyword.other.magma
+///   ^ -keyword
+
+while false do
+/// <- keyword.other
+///         ^ keyword.other
+  print 12;
+end while;
+/// <- keyword.other.magma
+
+repeat
+/// <- keyword.other.magma
+  foo();
+until false;
+/// <- keyword.other.magma
+
