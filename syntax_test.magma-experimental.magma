@@ -1,69 +1,77 @@
 /// SYNTAX TEST "Packages/Magma/magma-experimental.sublime-syntax"
 
 // Comments
-/// <- comment.line.magma
-///       ^ comment.line.magma
+/// <- comment.line
+///       ^ comment.line
 
 /* block comment */
-/// <- comment.block.magma
-///               ^ comment.block.magma
+/// <- comment.block
+///               ^ comment.block
 
 -124378478e-12p4;
-/// <- constant.numeric.magma
-///            ^ constant.numeric.magma
+/// <- constant.numeric
+///            ^ constant.numeric
 ///             ^ - constant
 
 "hello there\nx = %o";
-/// <- string.quoted.double.magma
-///         ^ constant.character.escape.magma
-///               ^ constant.character.escape.magma
+/// <- string.quoted.double
+///         ^ constant.character.escape
+///               ^ constant.character.escape
 ///                 ^ string
 ///                  ^ - string
 
+"not a comment: // /*"
+/// <- string
+///             ^ string
+///                ^ string
+///                  ^ string
+///                   ^ -string
+
 'foo';
-/// <- constant.language.symbol.magma
+/// <- constant.language.symbol
 
 hello;
-/// <- identifier.magma
+/// <- meta.identifier
 
 NumberField;
-/// <- identifier.magma
+/// <- meta.identifier
 
 true or false and 12 eq 7;
 /// <- constant.language.boolean
 ///  ^ keyword.operator.bool.logical
 ///     ^ constant.language.boolean
 ///           ^ keyword.operator.bool.logical
-///                  ^ keyword.operator.comparison.magma
+///                  ^ keyword.operator.comparison
 
 print "hello";
-/// <- keyword.other.magma
+/// <- keyword.other
 
-printf "% stuff%o%12o\n", 12; print "hi";
-/// <- keyword.other.magma
+printf "% //stuff%o%12o\n", 12; print "hi";
+/// <- keyword.other
 ///    ^ string
 ///     ^ invalid.illegal
-///            ^ constant.character.escape
+///       ^ string
 ///              ^ constant.character.escape
-///                   ^ constant.character.escape
-///                    ^ string
-///                     ^ -string
-///                           ^ keyword.other.magma
+///                ^ constant.character.escape
+///                     ^ constant.character.escape
+///                      ^ string
+///                       ^ -string
+///                             ^ keyword.other
 
 if foo then
-/// <- keyword.other.magma
-///    ^ keyword.other.magma
+/// <- keyword.other
+///    ^ keyword.other
   12;
 elif false then
-/// <- keyword.other.magma
+/// <- keyword.other
 ///  ^ constant.language.boolean
-///        ^ keyword.other.magma
+///        ^ keyword.other
   14;
 else
-/// <- keyword.other.magma
+/// <- keyword.other
   13;
 end if;
-/// <- keyword.other.magma
+/// <- keyword.other
 ///   ^ -keyword
 
 while false do
@@ -71,11 +79,272 @@ while false do
 ///         ^ keyword.other
   print 12;
 end while;
-/// <- keyword.other.magma
+/// <- keyword.other
 
 repeat
-/// <- keyword.other.magma
+/// <- keyword.other
   foo();
 until false;
-/// <- keyword.other.magma
+/// <- keyword.other
 
+x,y,_ := 12;
+///   ^ keyword.operator.assignment
+
+%! this is a system call with no extra syntax (for in print "")
+/// <- keyword.other
+
+vprint GaloisGroup, 12: "hello there", x;
+/// <- keyword.other
+///    ^ entity.name.class.verbosity
+///                 ^ constant.numeric
+///                     ^ string
+
+vprintf CustomThing: "%o%% done", Round(x*100);
+/// <- keyword.other
+///     ^ entity.name.class.verbosity
+///                  ^ string
+///                   ^ constant.character.escape
+
+freeze;
+/// <- keyword.other
+
+clear;
+/// <- keyword.other
+
+delete x;
+/// <- keyword.other
+
+exit;
+/// <- keyword.other
+
+quit;
+/// <- keyword.other
+
+import "foo": x, y, z;
+/// <- keyword.other
+
+time x +:= 12;
+/// <- keyword.other
+///    ^ keyword.operator.assignment
+
+print hello;
+/// <- keyword.other
+
+vtime Foo, 2: DoAThing();
+/// <- keyword.other
+///   ^ entity.name.class.verbosity
+
+assert false;
+/// <- keyword.other
+
+assert2 x eq y;
+/// <- keyword.other
+///       ^ keyword.operator.comparison
+
+assert3 IsNormal(G,H);
+/// <- keyword.other
+
+read name, "what is your name?";
+/// <- keyword.other
+
+readi foo;
+/// <- keyword.other
+
+local foo;
+/// <- keyword.other
+
+forward MyRecursiveThing;
+/// <- keyword.other
+///     ^ entity.name.function
+
+eval "x +:= 3";
+/// <- keyword.other
+
+load "~/my.magma";
+/// <- keyword.other
+
+iload "~/my_script.magma";
+/// <- keyword.other
+
+save "~/results.magma";
+/// <- keyword.other
+
+restore "~/results.magma";
+/// <- keyword.other
+
+declare type MyType: MyOtherType;
+/// <- keyword.other
+///     ^ keyword.other
+
+declare type MyType[foo];
+/// <- keyword.other
+///     ^ keyword.other
+///          ^ entity.name.class
+///                 ^ entity.name.class
+
+declare attributes MyType: x, y;
+/// <- keyword.other
+///     ^ keyword.other
+///                ^ entity.name.class
+
+declare verbose MyVerboseLevel, 2;
+/// <- keyword.other
+///     ^ keyword.other
+///             ^ entity.name.class.verbosity
+///                             ^ constant.numeric
+
+for x in Subgroups(G) do
+/// <- keyword.other
+///   ^ keyword.other
+///                   ^ keyword.other
+  print;
+end for;
+/// <- keyword.other
+
+for x := 1 to 10 by 2 do
+/// <- keyword.other
+///   ^ keyword.operator.assignment
+///        ^ keyword.other
+///              ^ keyword.other
+///                   ^ keyword.other
+  print x;
+end for;
+/// <- keyword.other
+
+error "that's no good!";
+/// <- keyword.other
+
+try
+/// <- keyword.other
+  DoAThing();
+  error "it went bad!";
+catch err
+/// <- keyword.other
+  print err`Object;
+end try;
+/// <- keyword.other
+/// ^ keyword.other
+
+require false: "this is bad";
+/// <- keyword.other
+
+requirerange foo, 0, 100;
+/// <- keyword.other
+
+requirege bar, -3;
+/// <- keyword.other
+
+function foo(x, y, z : hello := 12, howdy := foo)
+/// <- keyword.other
+///      ^ entity.name.function.function
+///          ^ variable.parameter
+///             ^ variable.parameter
+///                ^ variable.parameter
+///                    ^ variable.parameter
+///                                 ^ variable.parameter
+  return x + y + z + hello / howdy;
+end function;
+/// <- keyword.other
+/// ^ keyword.other
+
+procedure bar(~a, b : c := false)
+/// <- keyword.other
+///       ^ entity.name.function.procedure
+///           ^ keyword.operator.other
+///            ^ variable.parameter
+///               ^ variable.parameter
+///                   ^ variable.parameter
+  a +:= 1;
+  print a,b,c;
+end procedure;
+/// <- keyword.other
+/// ^ keyword.other
+
+intrinsic MyIntrinsic
+/// <- keyword.other
+///       ^ entity.name.function.intrinsic
+  (~x :: RngUPolElt[FldNum]   // comment
+///^ keyword.operator
+/// ^ variable.parameter
+///      ^ entity.name.class
+///                 ^ entity.name.class
+///                           ^ comment.line
+  , y :: {RngIntElt}
+/// ^ variable.parameter
+///      ^ entity.name.class.set
+///       ^ entity.name.class
+///                ^ entity.name.class.set
+  : a := 12 // comment
+/// ^ variable.parameter
+///      ^ constant.numeric
+///         ^ comment.line
+  ) -> .
+///    ^ entity.name.class.any
+  {"}
+  /// <- comment.block.documentation.intrinsic
+   /// <- constant.character.escape
+  Include(~x, a + y);
+  return Last(x)[1];
+end intrinsic;
+/// <- keyword.other
+/// ^ keyword.other
+
+x +:= y^2 where y is Random();
+/// ^ keyword.operator.assignment
+///       ^ keyword.other
+///       ^ meta.expression.where
+///               ^ keyword.other
+
+break;
+/// <- keyword.other
+
+break x;
+/// <- keyword.other
+///   ^ meta.statement.break
+
+continue;
+/// <- keyword.other
+
+continue foo_bar;
+/// <- keyword.other
+///            ^ meta.statement.continue
+
+case Sign(x):
+/// <- keyword.other
+when 1:
+/// <- keyword.other
+  print x, "is positive";
+when -1:
+/// <- keyword.other
+  print x, "is negative";
+else
+/// <- keyword.other
+  print x, "is zero";
+end case;
+/// <- keyword.other
+/// ^ keyword.other
+
+Sprintf("%o%", baz : x := 12);
+/// <- meta.identifier.magma
+///     ^ string
+///                  ^ variable.parameter
+///                    ^ keyword.operator.assignment
+///                       ^ constant.numeric
+///                        ^ meta.operator.function_call
+
+(x + 2);
+/// <- -meta.operator.function_call
+
+foo()["badger"][12]`hello.goodbye""foo";
+/// <- meta.identifier.magma
+///^ meta.operator.function_call
+///  ^ meta.operator.indexing
+///   ^ string
+///            ^ meta.operator.indexing
+///             ^ constant.numeric
+///                ^ keyword.operator
+///                ^ meta.operator.backtick
+///                      ^ keyword.operator
+///                      ^ meta.operator.dot
+///                              ^ keyword.operator
+///                              ^ meta.operator.doublequote
