@@ -43,8 +43,9 @@ true or false and 12 eq 7;
 ///           ^ keyword.operator.bool.logical
 ///                  ^ keyword.operator.comparison
 
-print "hello";
+print "hello" :Maximal;
 /// <- keyword.other
+///            ^ keyword.other
 
 printf "% //stuff%o%12o\n", 12; print "hi";
 /// <- keyword.other
@@ -348,3 +349,33 @@ foo()["badger"][12]`hello.goodbye""foo";
 ///                      ^ meta.operator.dot
 ///                              ^ keyword.operator
 ///                              ^ meta.operator.doublequote
+
+"hello" :Magma;
+///      ^ keyword.other
+
+{x : x in foo | x ne 12}`hello;
+/// <- meta.expression.set
+///    ^ keyword.other
+///                    ^ meta.expression.set
+///                     ^ keyword.operator
+
+[x : x in blah];
+/// <- meta.expression.seq
+///    ^ keyword.other
+
+{* y : y in blah *};
+/// <- meta.expression.mset
+///      ^ keyword.other
+
+{@ z : z in thingy @};
+/// <- meta.expression.iset
+///      ^ keyword.other
+
+t := <x in X, false, 12>;
+///  ^ meta.expression.tuple
+///     ^ keyword.operator
+///           ^ constant.language
+///                  ^ constant.numeric
+
+rec<x,y,z>;
+/// ^ meta.operator.constructor

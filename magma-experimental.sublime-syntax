@@ -2,12 +2,10 @@
 ---
 # TODO:
 # - Sprintf
-# - parentheses
 # - exists/forall/rep/random/select/else/Self/assigned
 # - ranges (like [1..3 by 2])
-# - print levels (:Default/:Minimal/:Maximal/:Magma)
-# - constructors (hom<...>)
-# - sets, sequences, etc
+# - improve generic constructor
+# - special constructors (rec, recformat, hom, map, etc?)
 # - case expression
 # - regular expression syntax
 
@@ -82,6 +80,9 @@ contexts:
     - include: other_operator
     - include: where_expression
     - include: sprintf_call
+    - include: parentheses
+    - include: aggregate
+    - include: constructor
     - include: identifier
 
   literal:
@@ -89,6 +90,13 @@ contexts:
     - include: number_literal
     - include: symbol_literal
     - include: boolean_literal
+
+  aggregate:
+    - include: mset
+    - include: iset
+    - include: set
+    - include: seq
+    - include: tuple
 
   # UTILS
 
@@ -175,8 +183,25 @@ contexts:
     - include: backtick_operator_POP
     - include: doublequote_operator_POP
     - include: dot_operator_POP
+    - include: constructor_operator_POP
     - match: '(?=.)'
       pop: true
+
+  constructor_operator_POP:
+    - match: '<'
+      set:
+        - constructor_METASCOPE_POP
+        - constructor_operator_2_POP
+
+  constructor_METASCOPE_POP:
+    - meta_scope: meta.operator.constructor.magma
+    - match: ''
+      pop: true
+
+  constructor_operator_2_POP:
+    - match: '>'
+      set: OPT_post_operator_POP
+    - include: expression
 
   function_call_operator_POP:
     - match: '\('
@@ -276,7 +301,21 @@ contexts:
       scope: keyword.other.magma
       push:
         - statement_METASCOPE_POP
-        - expression_list_statement_POP
+        - print_args_POP
+
+  print_args_POP:
+    - match: ';'
+      pop: true
+    - include: print_level_POP
+    - include: expression
+
+  print_level_POP:
+    - match: ':'
+      set:
+        - match: '\b(Default|Minimal|Maximal|Magma)\b'
+          scope: keyword.other.magma
+          set: REQ_blank_statement_POP
+        - include: illegal
 
   # VPRINT
 
@@ -708,6 +747,7 @@ contexts:
       - match: '(\b(div|cat|meet|join|diff|sdiff|mod|or|and|xor)|(\+|-|/|\*|^))?(:=)'
         scope: keyword.operator.assignment.magma
         set: expression_statement_POP
+      - include: print_level_POP
       - include: expression_statement_POP
 
   # SYSCALL
@@ -1378,3 +1418,167 @@ contexts:
   #             set: OPT_post_operator_POP
   #           - include: REQ_function_call_arguments_POP
   #       - include: OPT_post_operator_POP
+
+  # PARENTHESES
+
+  parentheses:
+    - match: '\('
+      push:
+        - parentheses_METASCOPE_POP
+        - parentheses_2_POP
+
+  parentheses_METASCOPE_POP:
+    - meta_scope: meta.expression.parentheses.magma
+    - match: ''
+      pop: true
+
+  parentheses_2_POP:
+    - match: '\)'
+      set: OPT_post_operator_POP
+    - include: expression
+
+  # SET
+
+  set:
+    - match: '\{'
+      push:
+        - set_METASCOPE_POP
+        - set_2_POP
+
+  set_METASCOPE_POP:
+    - meta_scope: meta.expression.set.magma
+    - match: ''
+      pop: true
+
+  set_2_POP:
+    - match: '\}'
+      set: OPT_post_operator_POP
+    - match: ':'
+      set:
+        - match: '\bin\b'
+          scope: keyword.other.magma
+          set:
+            - match: '\}'
+              set: OPT_post_operator_POP
+            - match: '\|'
+              set:
+                - match: '\}'
+                  set: OPT_post_operator_POP
+                - include: expression
+            - include: expression
+        - include: expression
+    - include: expression
+    
+  # SEQ
+
+  seq:
+    - match: '\['
+      push:
+        - seq_METASCOPE_POP
+        - seq_2_POP
+
+  seq_METASCOPE_POP:
+    - meta_scope: meta.expression.seq.magma
+    - match: ''
+      pop: true
+
+  seq_2_POP:
+    - match: '\]'
+      set: OPT_post_operator_POP
+    - match: ':'
+      set:
+        - match: '\bin\b'
+          scope: keyword.other.magma
+          set:
+            - match: '\]'
+              set: OPT_post_operator_POP
+            - match: '\|'
+              set:
+                - match: '\]'
+                  set: OPT_post_operator_POP
+                - include: expression
+            - include: expression
+        - include: expression
+    - include: expression
+    
+  # ISET
+
+  iset:
+    - match: '\{@'
+      push:
+        - iset_METASCOPE_POP
+        - iset_2_POP
+
+  iset_METASCOPE_POP:
+    - meta_scope: meta.expression.iset.magma
+    - match: ''
+      pop: true
+
+  iset_2_POP:
+    - match: '@\}'
+      set: OPT_post_operator_POP
+    - match: ':'
+      set:
+        - match: '\bin\b'
+          scope: keyword.other.magma
+          set:
+            - match: '@\}'
+              set: OPT_post_operator_POP
+            - match: '\|'
+              set:
+                - match: '@\}'
+                  set: OPT_post_operator_POP
+                - include: expression
+            - include: expression
+        - include: expression
+    - include: expression
+    
+  # MSET
+
+  mset:
+    - match: '\{\*'
+      push:
+        - mset_METASCOPE_POP
+        - mset_2_POP
+
+  mset_METASCOPE_POP:
+    - meta_scope: meta.expression.mset.magma
+    - match: ''
+      pop: true
+
+  mset_2_POP:
+    - match: '\*\}'
+      set: OPT_post_operator_POP
+    - match: ':'
+      set:
+        - match: '\bin\b'
+          scope: keyword.other.magma
+          set:
+            - match: '\*\}'
+              set: OPT_post_operator_POP
+            - match: '\|'
+              set:
+                - match: '\*\}'
+                  set: OPT_post_operator_POP
+                - include: expression
+            - include: expression
+        - include: expression
+    - include: expression
+    
+  # TUPLE
+
+  tuple:
+    - match: '<'
+      push:
+        - tuple_METASCOPE_POP
+        - tuple_2_POP
+
+  tuple_METASCOPE_POP:
+    - meta_scope: meta.expression.tuple.magma
+    - match: ''
+      pop: true
+
+  tuple_2_POP:
+    - match: '>'
+      set: OPT_post_operator_POP
+    - include: expression
