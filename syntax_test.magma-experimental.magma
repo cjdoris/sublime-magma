@@ -377,5 +377,5 @@ t := <x in X, false, 12>;
 ///           ^ constant.language
 ///                  ^ constant.numeric
 
-rec<x,y,z>;
-/// ^ meta.operator.constructor
+recformat<x,y,z>;
+///      ^ meta.operator.constructor
