@@ -1,5 +1,16 @@
 %YAML 1.2
 ---
+# TODO:
+# - Sprintf
+# - parentheses
+# - exists/forall/rep/random/select/else/Self/assigned
+# - ranges (like [1..3 by 2])
+# - print levels (:Default/:Minimal/:Maximal/:Magma)
+# - constructors (hom<...>)
+# - sets, sequences, etc
+# - case expression
+# - regular expression syntax
+
 name: Magma (experimental)
 file_extensions: [magma, mag]
 scope: source.magma
