@@ -11,7 +11,7 @@
 
 name: Magma (experimental)
 file_extensions: [magma, mag]
-scope: source.magma
+scope: source.magma-experimental
 
 variables:
   escape_char: \\.
@@ -70,6 +70,8 @@ contexts:
     - include: requirege_statement
     - include: try_statement
     - include: syscall_statement
+    - include: help_statement
+    - include: help_browser_statement
     - include: assignment_or_expression_statement
 
   expression:
@@ -79,10 +81,15 @@ contexts:
     - include: arithmetic_operator
     - include: other_operator
     - include: where_expression
+    - include: select_expression
+    - include: function_expression
+    - include: procedure_expression
     - include: sprintf_call
     - include: parentheses
     - include: aggregate
     - include: constructor
+    - include: underscore
+    - include: reserved_words
     - include: identifier
 
   literal:
@@ -172,7 +179,7 @@ contexts:
 
   identifier:
     - match: '{{identifier}}'
-      scope: meta.identifier.magma
+      scope: meta.identifier.magma variable.other
       push: OPT_post_operator_POP
 
   # POST OPERATOR
@@ -184,7 +191,13 @@ contexts:
     - include: doublequote_operator_POP
     - include: dot_operator_POP
     - include: constructor_operator_POP
+    - include: arithmetic_post_operator_POP
     - match: '(?=.)'
+      pop: true
+
+  arithmetic_post_operator_POP:
+    - match: '(\+|-|/|\*|\^)(?![:\}])'
+      scope: keyword.operator.magma meta.operator.arithmetic.magma
       pop: true
 
   constructor_operator_POP:
@@ -275,7 +288,7 @@ contexts:
       pop: true
 
   dot_operator_POP:
-    - match: '\.'
+    - match: '\.(?![.])'
       scope: keyword.operator.magma meta.operator.dot.magma
       pop: true
 
@@ -331,7 +344,7 @@ contexts:
     - match: '{{identifier}}'
       scope: entity.name.class.verbosity.magma
       set:
-        - match: ':'
+        - match: ':(?![:=])'
           pop: true
         - include: expression
     - include: illegal
@@ -678,6 +691,7 @@ contexts:
     - match: '\bdo\b'
       scope: keyword.other.magma
       pop: true
+    - include: expression
 
   while_body_POP:
     - match: '\b(end\s+while)\s*;'
@@ -723,7 +737,7 @@ contexts:
       scope: keyword.operator.comparison.magma
 
   arithmetic_operator:
-    - match: '\+|-|/|\*|\^'
+    - match: '(\+|-|/|\*|\^)(?![:\}])'
       scope: keyword.operator.arithmetic.magma
 
   other_operator:
@@ -992,12 +1006,33 @@ contexts:
       scope: keyword.other.magma
       push:
         - function_METASCOPE_POP
+        - REQ_blank_statement_POP
         - function_body_POP
         - REQ_function_arguments_POP
-        - REQ_function_name_POP
+        - OPT_function_name_POP
+
+  OPT_function_name_POP:
+    - match: '{{identifier}}'
+      scope: entity.name.function.function.magma
+      pop: true
+    - match: '(?=.)'
+      pop: true
+
+  function_expression:
+    - match: '\bfunction\b'
+      scope: keyword.other.magma
+      push:
+        - function_expression_METASCOPE_POP
+        - function_body_POP
+        - REQ_function_arguments_POP
 
   function_METASCOPE_POP:
     - meta_scope: meta.statement.function.magma
+    - match: ''
+      pop: true
+
+  function_expression_METASCOPE_POP:
+    - meta_scope: meta.expression.function.magma
     - match: ''
       pop: true
 
@@ -1044,7 +1079,7 @@ contexts:
       set:
         - match: '\bfunction\b'
           scope: keyword.other.magma
-          set: REQ_blank_statement_POP
+          pop: true
         - include: illegal
     - include: statement
 
@@ -1105,20 +1140,35 @@ contexts:
       scope: keyword.other.magma
       push:
         - procedure_METASCOPE_POP
+        - REQ_blank_statement_POP
         - procedure_body_POP
         - REQ_procedure_arguments_POP
-        - REQ_procedure_name_POP
+        - OPT_procedure_name_POP
+
+  procedure_expression:
+    - match: '\bprocedure\b'
+      scope: keyword.other.magma
+      push:
+        - procedure_expression_METASCOPE_POP
+        - procedure_body_POP
+        - REQ_procedure_arguments_POP
+
+  procedure_expression_METASCOPE_POP:
+    - meta_scope: meta.expression.procedure.magma
+    - match: ''
+      pop: true
 
   procedure_METASCOPE_POP:
     - meta_scope: meta.statement.procedure.magma
     - match: ''
       pop: true
 
-  REQ_procedure_name_POP:
+  OPT_procedure_name_POP:
     - match: '{{identifier}}'
       scope: entity.name.function.procedure.magma
       pop: true
-    - include: illegal
+    - match: '(?=.)'
+      pop: true
 
   REQ_procedure_arguments_POP:
     - match: '\('
@@ -1166,7 +1216,7 @@ contexts:
       set:
         - match: '\bprocedure\b'
           scope: keyword.other.magma
-          set: REQ_blank_statement_POP
+          pop: true
         - include: illegal
     - include: statement
 
@@ -1189,7 +1239,7 @@ contexts:
       pop: true
 
   REQ_intrinsic_name_POP:
-    - match: '{{identifier}}'
+    - match: "{{identifier}}|'[^']*'"
       scope: entity.name.function.intrinsic.magma
       pop: true
     - include: illegal
@@ -1331,9 +1381,21 @@ contexts:
 
   OPT_intrinsic_return_type_POP:
     - match: '->'
-      set: REQ_type_POP
-    - match: '(?=.)'
+      set:
+        - OPT_intrinsic_return_type_next_POP
+        - REQ_type_POP
+    - match: '(?=\{)'
       pop: true
+    - include: illegal
+
+  OPT_intrinsic_return_type_next_POP:
+    - match: ','
+      set:
+        - OPT_intrinsic_return_type_next_POP
+        - REQ_type_POP
+    - match: '(?=\{)'
+      pop: true
+    - include: illegal
 
   REQ_intrinsic_documentation_POP:
     - match: '(\{\s*(")\s*\})'
@@ -1582,3 +1644,50 @@ contexts:
     - match: '>'
       set: OPT_post_operator_POP
     - include: expression
+
+  # UNDERSCORE
+
+  underscore:
+    - match: '\b_\b'
+      scope: keyword.other.magma
+      push: OPT_post_operator_POP
+
+  # SELECT EXPRESSION
+
+  select_expression:
+    - match: '\bselect\b'
+      scope: keyword.other.magma
+      push:
+        - select_METASCOPE_POP
+        - select_expression_2_POP
+
+  select_METASCOPE_POP:
+    - meta_scope: meta.expression.select.magma
+    - match: ''
+      pop: true
+
+  select_expression_2_POP:
+    - match: '\belse\b'
+      scope: keyword.other.magma
+      pop: true
+    - include: expression
+
+  # RESERVED WORDS
+
+  reserved_words:
+    - match: '\b(_|adj|and|assert|assert2|assert3|assigned|break|by|case|cat|catch|clear|cmpeq|cmpne|continue|declare|default|delete|diff|div|do|elif|else|end|eq|error|eval|exists|exit|false|for|forall|forward|fprintf|freeze|function|ge|gt|if|iload|import|in|intrinsic|is|join|le|load|local|lt|meet|mod|ne|not|notadj|notin|notsubset|or|print|printf|procedure|quit|random|read|readi|repeat|require|requirege|requirerange|restore|return|save|sdiff|select|subset|then|time|to|true|try|until|vprint|vprintf|vtime|when|where|while|xor)\b'
+      scope: invalid.illegal.magma
+
+  # HELP
+
+  help_statement:
+    - match: '(\?)(?!\?).*$'
+      captures:
+        1: keyword.other.magma
+
+  # HELP BROWSER
+
+  help_browser_statement:
+    - match: '(\?\?).*$'
+      captures:
+        1: keyword.other.magma

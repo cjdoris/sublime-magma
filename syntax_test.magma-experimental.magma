@@ -77,6 +77,7 @@ end if;
 
 while false do
 /// <- keyword.other
+///   ^ constant.language.boolean
 ///         ^ keyword.other
   print 12;
 end while;
@@ -279,8 +280,12 @@ intrinsic MyIntrinsic
 /// ^ variable.parameter
 ///      ^ constant.numeric
 ///         ^ comment.line
-  ) -> .
+  ) -> ., {**}, {@@}, {}, []
 ///    ^ entity.name.class.any
+///       ^ entity.name.class.mset
+///             ^ entity.name.class.iset
+///                   ^ entity.name.class.set
+///                       ^ entity.name.class.seq
   {"}
   /// <- comment.block.documentation.intrinsic
    /// <- constant.character.escape
@@ -379,3 +384,4 @@ t := <x in X, false, 12>;
 
 recformat<x,y,z>;
 ///      ^ meta.operator.constructor
+
