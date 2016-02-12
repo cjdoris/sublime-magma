@@ -2,8 +2,6 @@
 ---
 # TODO:
 # - Sprintf
-# - exists/forall/rep/random/select/else/Self/assigned
-# - ranges (like [1..3 by 2])
 # - improve generic constructor
 # - special constructors (rec, recformat, hom, map, etc?)
 # - case expression
@@ -17,7 +15,41 @@ variables:
   escape_char: \\.
   format_char: '%[-]?[0-9]*(\.[0-9]*)?[oOmh]|%\*[oOmh]|%%'
   bad_format_char: '%'
-  identifier: '\b[a-zA-Z_][a-zA-Z_0-9]*\b'
+  base_identifier: '\b[a-zA-Z_][a-zA-Z_0-9]*\b'
+  reserved_word: '\b(_|adj|and|assert|assert2|assert3|assigned|break|by|case|cat|catch|clear|cmpeq|cmpne|continue|declare|default|delete|diff|div|do|elif|else|end|eq|error|eval|exists|exit|false|for|forall|forward|fprintf|freeze|function|ge|gt|if|iload|import|in|intrinsic|is|join|le|load|local|lt|meet|mod|ne|not|notadj|notin|notsubset|or|print|printf|procedure|quit|random|read|readi|rep|repeat|require|requirege|requirerange|restore|return|save|sdiff|select|subset|then|time|to|true|try|until|vprint|vprintf|vtime|when|where|while|xor)\b'
+  identifier: '(?!{{reserved_word}}){{base_identifier}}'
+  comma: ','
+  colon: ':(?![:=])'
+  seq_open: '\['
+  seq_close: '\]'
+  iset_open: '\{@'
+  iset_close: '@\}'
+  mset_open: '\{\*'
+  mset_close: '\*\}'
+  set_open: '\{(?![@\*])'
+  set_close: '(?<![@\*])\}'
+  bar: '\|'
+  tuple_open: '<'
+  tuple_close: '>'
+  paren_open: '\('
+  paren_close: '\)'
+  assign: ':='
+  index_open: '{{seq_open}}'
+  index_close: '{{seq_close}}'
+  constructor_open: '{{tuple_open}}'
+  constructor_close: '{{tuple_close}}'
+  backtick: '`'
+  string_open: '"'
+  string_close: '"'
+  dot: '\.(?![.])'
+  semicolon: ';'
+  arithmetic_operator: '(\+|-|/|\*|\^)(?![:\}])'
+  tilde: '~'
+  symbol: "'[^']*'"
+  integer: '\b[0-9]+\b'
+  argtype: '::'
+  setseq_open: '{{set_open}}{{seq_open}}'
+  setseq_close: '{{seq_close}}{{set_close}}'
 
 contexts:
 
@@ -48,7 +80,6 @@ contexts:
     - include: readi_statement
     - include: local_statement
     - include: forward_statement
-    - include: eval_statement
     - include: declare_statement
     - include: if_statement
     - include: case_statement
@@ -69,7 +100,7 @@ contexts:
     - include: requirerange_statement
     - include: requirege_statement
     - include: try_statement
-    - include: syscall_statement
+    - include: percent_statement
     - include: help_statement
     - include: help_browser_statement
     - include: assignment_or_expression_statement
@@ -84,12 +115,18 @@ contexts:
     - include: select_expression
     - include: function_expression
     - include: procedure_expression
+    - include: eval_expression
+    - include: assigned_expression
+    - include: forall_expression
+    - include: exists_expression
+    - include: random_expression
+    - include: rep_expression
     - include: sprintf_call
     - include: parentheses
     - include: aggregate
     - include: constructor
     - include: underscore
-    - include: reserved_words
+    - include: reserved_word
     - include: identifier
 
   literal:
@@ -152,21 +189,21 @@ contexts:
   # LITERALS
 
   string_literal:
-    - match: '"'
+    - match: '{{string_open}}'
       push:
         - meta_scope: string.quoted.double.magma
         - meta_include_prototype: false
         - include: string_chars
-        - match: '"'
+        - match: '{{string_close}}'
           set: OPT_post_operator_POP
 
   number_literal:
-    - match: '[+-]?\b([0-9]+)(\.[0-9]+)?([eE][-+]?[0-9]+)?([pP][0-9]+)?\b'
+    - match: '[+-]?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?([pP][0-9]+)?\b'
       scope: constant.numeric.magma
       push: OPT_post_operator_POP
 
   symbol_literal:
-    - match: "'[^']*'"
+    - match: '{{symbol}}'
       scope: constant.language.symbol.magma
       push: OPT_post_operator_POP
 
@@ -196,12 +233,12 @@ contexts:
       pop: true
 
   arithmetic_post_operator_POP:
-    - match: '(\+|-|/|\*|\^)(?![:\}])'
+    - match: '{{arithmetic_operator}}'
       scope: keyword.operator.magma meta.operator.arithmetic.magma
       pop: true
 
   constructor_operator_POP:
-    - match: '<'
+    - match: '{{constructor_open}}'
       set:
         - constructor_METASCOPE_POP
         - constructor_operator_2_POP
@@ -212,12 +249,12 @@ contexts:
       pop: true
 
   constructor_operator_2_POP:
-    - match: '>'
+    - match: '{{constructor_close}}'
       set: OPT_post_operator_POP
     - include: expression
 
   function_call_operator_POP:
-    - match: '\('
+    - match: '{{paren_open}}'
       set:
         - function_call_METASCOPE_POP
         - function_call_operator_2_POP
@@ -228,53 +265,53 @@ contexts:
       pop: true
 
   function_call_operator_2_POP:
-    - match: '\)'
+    - match: '{{paren_close}}'
       set: OPT_post_operator_POP
     - include: REQ_function_call_arguments_POP
 
   REQ_function_call_arguments_POP:
-    - match: '\)'
+    - match: '{{paren_close}}'
       set: OPT_post_operator_POP
-    - match: ':'
+    - match: '{{colon}}'
       set: REQ_function_call_optional_arguments_POP
     - include: expression
 
   REQ_function_call_optional_arguments_POP:
-    - match: '\)'
+    - match: '{{paren_close}}'
       set: OPT_post_operator_POP
     - match: '{{identifier}}'
       scope: variable.parameter.magma
       set:
-        - match: ':='
+        - match: '{{assign}}'
           scope: keyword.operator.assignment.magma
           set:
-            - match: ','
+            - match: '{{comma}}'
               set: REQ_function_call_optional_arguments_POP
-            - match: '\)'
+            - match: '{{paren_close}}'
               set: OPT_post_operator_POP
             - include: expression
         - include: illegal
     - include: illegal
 
   REQ_function_call_next_arguments_POP:
-    - match: '\)'
+    - match: '{{paren_close}}'
       set: OPT_post_operator_POP
-    - match: ':'
+    - match: '{{colon}}'
       set: REQ_function_call_optional_arguments_POP
-    - match: ','
+    - match: '{{comma}}'
       set: REQ_function_call_arguments_POP
     - include: illegal
 
   indexing_operator_POP:
-    - match: '\['
+    - match: '{{index_open}}'
       set:
         - meta_scope: meta.operator.indexing.magma
-        - match: '\]'
+        - match: '{{index_close}}'
           set: OPT_post_operator_POP
         - include: expression
 
   backtick_operator_POP:
-    - match: '`'
+    - match: '{{backtick}}'
       scope: keyword.operator.magma
       set:
         - meta_scope: meta.operator.backtick.magma
@@ -288,7 +325,7 @@ contexts:
       pop: true
 
   dot_operator_POP:
-    - match: '\.(?![.])'
+    - match: '{{dot}}'
       scope: keyword.operator.magma meta.operator.dot.magma
       pop: true
 
@@ -302,7 +339,7 @@ contexts:
         - match: '\bis\b'
           scope: keyword.other.magma
           pop: true
-        - match: ':='
+        - match: '{{assign}}'
           scope: keyword.operator.assignment.magma
           pop: true
         - include: expression
@@ -317,13 +354,13 @@ contexts:
         - print_args_POP
 
   print_args_POP:
-    - match: ';'
+    - match: '{{semicolon}}'
       pop: true
     - include: print_level_POP
     - include: expression
 
   print_level_POP:
-    - match: ':'
+    - match: '{{colon}}'
       set:
         - match: '\b(Default|Minimal|Maximal|Magma)\b'
           scope: keyword.other.magma
@@ -344,7 +381,7 @@ contexts:
     - match: '{{identifier}}'
       scope: entity.name.class.verbosity.magma
       set:
-        - match: ':(?![:=])'
+        - match: '{{colon}}'
           pop: true
         - include: expression
     - include: illegal
@@ -361,16 +398,16 @@ contexts:
 
   expression_list_statement_POP:
     - include: expression
-    - match: ';'
+    - match: '{{semicolon}}'
       pop: true
 
   REQ_format_string_literal_POP:
-    - match: '"'
+    - match: '{{string_open}}'
       set:
         - meta_scope: string.quoted.double.magma
         - meta_include_prototype: false
         - include: format_string_chars
-        - match: '"'
+        - match: '{{string_close}}'
           pop: true
     - include: illegal
 
@@ -444,7 +481,7 @@ contexts:
         - REQ_blank_statement_POP
 
   REQ_blank_statement_POP:
-    - match: ';'
+    - match: '{{semicolon}}'
       pop: true
     - include: illegal
 
@@ -515,15 +552,15 @@ contexts:
   ident_list_statement_POP:
     - match: '{{identifier}}'
       set:
-        - match: ';'
+        - match: '{{semicolon}}'
           pop: true
-        - match: ','
+        - match: '{{comma}}'
           set: ident_list_statement_POP
         - include: illegal
     - include: illegal
 
   expression_list_colon_POP:
-    - match: ':'
+    - match: '{{colon}}'
       pop: true
     - include: expression
 
@@ -575,12 +612,15 @@ contexts:
 
   # EVAL
 
-  eval_statement:
+  eval_expression:
     - match: '\beval\b'
       scope: keyword.other.magma
-      push:
-        - statement_METASCOPE_POP
-        - expression_statement_POP
+
+  # ASSIGNED
+
+  assigned_expression:
+    - match: '\bassigned\b'
+      scope: keyword.other.magma
 
   # LOAD
 
@@ -694,10 +734,13 @@ contexts:
     - include: expression
 
   while_body_POP:
-    - match: '\b(end\s+while)\s*;'
-      captures:
-        1: keyword.other.magma
-      pop: true
+    - match: '\bend\b'
+      scope: keyword.other.magma
+      set:
+        - match: '\bwhile\b'
+          scope: keyword.other.magma
+          set: REQ_blank_statement_POP
+        - include: illegal        
     - include: statement
 
   # REPEAT
@@ -722,7 +765,7 @@ contexts:
 
 
   expression_statement_POP:
-    - match: ';'
+    - match: '{{semicolon}}'
       pop: true
     - include: expression
 
@@ -737,11 +780,11 @@ contexts:
       scope: keyword.operator.comparison.magma
 
   arithmetic_operator:
-    - match: '(\+|-|/|\*|\^)(?![:\}])'
+    - match: '{{arithmetic_operator}}'
       scope: keyword.operator.arithmetic.magma
 
   other_operator:
-    - match: '\b(div|cat|meet|join|diff|sdiff|mod)\b|#|&|`|!|@|@@|\.|\.\.|\.\.\.|~'
+    - match: '\b(div|cat|meet|join|diff|sdiff|mod|by)\b|#|&|`|!|@|@@|\.|\.\.|\.\.\.|~'
       scope: keyword.operator.other.magma
 
   # ASSIGNMENT OR EXPRESSION
@@ -767,12 +810,27 @@ contexts:
   # SYSCALL
   # TODO: maybe add shell highlighting to the contents?
   
-  syscall_statement:
+  percent_statement:
     - match: '(%!)(.*)$'
       captures:
-        0: meta.syscall_statement.magma
+        0: meta.statement.percent.bang.magma
         1: keyword.other.magma
-        2: meta.syscall_statement.body.magma
+        2: meta.statement.percent.bang.body.magma
+    - match: '(%P)(.*)$'
+      captures:
+        0: meta.statement.percent.P.magma
+        1: keyword.other.magma
+        2: meta.statement.percent.P.body.magma
+    - match: '(%p)(.*)$'
+      captures:
+        0: meta.statement.percent.p.magma
+        1: keyword.other.magma
+        2: meta.statement.percent.p.body.magma
+    - match: '(%)(.*)$'
+      captures:
+        0: meta.statement.percent.magma
+        1: keyword.other.magma
+        2: meta.statement.percent.body.magma
 
   # DECLARE
   
@@ -818,18 +876,18 @@ contexts:
         - REQ_verbosity_name_POP
 
   REQ_semicolon_POP:
-    - match: ';'
+    - match: '{{semicolon}}'
       pop: true
     - include: illegal
 
   REQ_integer_literal_POP:
-    - match: '\b[0-9]+\b'
+    - match: '{{integer}}'
       scope: constant.numeric.magma
       pop: true
     - include: illegal
 
   REQ_comma_POP:
-    - match: ','
+    - match: '{{comma}}'
       pop: true
     - include: illegal
 
@@ -849,12 +907,12 @@ contexts:
     - match: '{{identifier}}'
       scope: entity.name.class.magma
       set:
-        - match: '\['
+        - match: '{{index_open}}'
           set:
             - match: '{{identifier}}'
               scope: entity.name.class.magma
               set:
-                - match: '\]'
+                - match: '{{index_close}}'
                   pop: true
                 - include: illegal
             - include: illegal
@@ -863,9 +921,9 @@ contexts:
     - include: illegal
 
   OPT_colon_ident_list_statement_POP:
-    - match: ':'
+    - match: '{{colon}}'
       set: ident_list_statement_POP
-    - match: ';'
+    - match: '{{semicolon}}'
       pop: true
     - include: illegal
 
@@ -885,10 +943,13 @@ contexts:
       pop: true
 
   for_body_POP:
-    - match: '\b(end\s+for)\s*;'
-      captures:
-        1: keyword.other.magma
-      pop: true
+    - match: '\bend\b'
+      scope: keyword.other.magma
+      set:
+        - match: '\bfor\b'
+          scope: keyword.other.magma
+          set: REQ_blank_statement_POP
+        - include: illegal
     - include: statement
 
   do_POP:
@@ -904,7 +965,7 @@ contexts:
           set:
             - include: do_POP
             - include: expression
-        - match: ':='
+        - match: '{{assign}}'
           scope: keyword.operator.assignment.magma
           set:
             - match: '\bto\b'
@@ -967,7 +1028,7 @@ contexts:
       pop: true
 
   require_arguments_POP:
-    - match: ':'
+    - match: '{{colon}}'
       set: expression_list_statement_POP
     - include: expression
 
@@ -1037,11 +1098,11 @@ contexts:
       pop: true
 
   REQ_function_arguments_POP:
-    - match: '\('
+    - match: '{{paren_open}}'
       set:
-        - match: '\)'
+        - match: '{{paren_close}}'
           pop: true
-        - match: ':'
+        - match: '{{colon}}'
           set: REQ_function_optional_arguments_POP
         - include: REQ_function_argument_list_POP
     - include: illegal
@@ -1050,11 +1111,11 @@ contexts:
     - match: '{{identifier}}'
       scope: variable.parameter.magma
       set:
-        - match: ','
+        - match: '{{comma}}'
           set: REQ_function_argument_list_POP
-        - match: '\)'
+        - match: '{{paren_close}}'
           pop: true
-        - match: ':'
+        - match: '{{colon}}'
           set: REQ_function_optional_arguments_POP
         - include: illegal
     - include: illegal
@@ -1063,11 +1124,11 @@ contexts:
     - match: '{{identifier}}'
       scope: variable.parameter.magma
       set:
-        - match: ':='
+        - match: '{{assign}}'
           set:
-            - match: ','
+            - match: '{{comma}}'
               set: REQ_function_optional_arguments_POP
-            - match: '\)'
+            - match: '{{paren_close}}'
               pop: true
             - include: expression
         - include: illegal
@@ -1171,11 +1232,11 @@ contexts:
       pop: true
 
   REQ_procedure_arguments_POP:
-    - match: '\('
+    - match: '{{paren_open}}'
       set:
-        - match: '\)'
+        - match: '{{paren_close}}'
           pop: true
-        - match: ':'
+        - match: '{{colon}}'
           set: REQ_procedure_optional_arguments_POP
         - include: REQ_procedure_argument_list_POP
     - include: illegal
@@ -1184,24 +1245,24 @@ contexts:
     - match: '{{identifier}}'
       scope: variable.parameter.magma
       set:
-        - match: ','
+        - match: '{{comma}}'
           set: REQ_procedure_argument_list_POP
-        - match: '\)'
+        - match: '{{paren_close}}'
           pop: true
-        - match: ':'
+        - match: '{{colon}}'
           set: REQ_procedure_optional_arguments_POP
         - include: illegal
-    - match: '~'
+    - match: '{{tilde}}'
       scope: keyword.operator.other.magma
       set:
         - match: '{{identifier}}'
           scope: variable.parameter.magma
           set:
-            - match: ','
+            - match: '{{comma}}'
               set: REQ_procedure_argument_list_POP
-            - match: '\)'
+            - match: '{{paren_close}}'
               pop: true
-            - match: ':'
+            - match: '{{colon}}'
               set: REQ_procedure_optional_arguments_POP
             - include: illegal
         - include: illegal
@@ -1239,22 +1300,22 @@ contexts:
       pop: true
 
   REQ_intrinsic_name_POP:
-    - match: "{{identifier}}|'[^']*'"
+    - match: "{{identifier}}|{{symbol}}"
       scope: entity.name.function.intrinsic.magma
       pop: true
     - include: illegal
 
   REQ_intrinsic_arguments_POP:
-    - match: '\('
+    - match: '{{paren_open}}'
       set:
-        - match: '\)'
+        - match: '{{paren_close}}'
           pop: true
-        - match: ':'
+        - match: '{{colon}}'
           set: REQ_intrinsic_optional_argument_list_POP
         - include: REQ_intrinsic_argument_list_POP
 
   REQ_intrinsic_argument_list_POP:
-    - match: '~'
+    - match: '{{tilde}}'
       scope: keyword.operator.other.magma
       set: REQ_intrinsic_argument_list_2_POP
     - include: REQ_intrinsic_argument_list_2_POP
@@ -1268,7 +1329,7 @@ contexts:
     - include: illegal
 
   OPT_intrinsic_argument_type_POP:
-    - match: '::'
+    - match: '{{argtype}}'
       set: REQ_type_POP
     - match: '(?=.)'
       pop: true
@@ -1289,7 +1350,7 @@ contexts:
     - include: illegal
 
   any_type_POP:
-    - match: '\.'
+    - match: '{{dot}}'
       scope: entity.name.class.any.magma
       pop: true
 
@@ -1297,9 +1358,9 @@ contexts:
     - match: '{{identifier}}'
       scope: entity.name.class.magma
       set:
-        - match: '\['
+        - match: '{{index_open}}'
           set:
-            - match: '\]'
+            - match: '{{index_close}}'
               pop: true
             - include: type_list
             - include: illegal
@@ -1311,71 +1372,71 @@ contexts:
       push: type_POP
 
   iset_type_POP:
-    - match: '\{@'
+    - match: '{{iset_open}}'
       scope: entity.name.class.iset.magma
       set:
-        - match: '@\}'
+        - match: '{{iset_close}}'
           scope: entity.name.class.iset.magma
           pop: true
         - include: type_list
         - include: illegal
 
   mset_type_POP:
-    - match: '\{\*'
+    - match: '{{mset_open}}'
       scope: entity.name.class.mset.magma
       set:
-        - match: '\*\}'
+        - match: '{{mset_close}}'
           scope: entity.name.class.mset.magma
           pop: true
         - include: type_list
         - include: illegal
 
   tuple_type_POP:
-    - match: '<'
+    - match: '{{tuple_open}}'
       scope: entity.name.class.tuple.magma
       set:
-        - match: '>'
+        - match: '{{tuple_close}}'
           scope: entity.name.class.tuple.magma
           pop: true
         - include: type_list
         - include: illegal
 
   setseq_type_POP:
-    - match: '\{\['
+    - match: '{{setseq_open}}'
       scope: entity.name.class.setseq.magma
       set:
-        - match: '\]\}'
+        - match: '{{setseq_close}}'
           scope: entity.name.class.setseq.magma
           pop: true
         - include: type_list
         - include: illegal
 
   set_type_POP:
-    - match: '\{'
+    - match: '{{set_open}}'
       scope: entity.name.class.set.magma
       set:
-        - match: '\}'
+        - match: '{{set_close}}'
           scope: entity.name.class.set.magma
           pop: true
         - include: type_list
         - include: illegal
 
   seq_type_POP:
-    - match: '\['
+    - match: '{{seq_open}}'
       scope: entity.name.class.seq.magma
       set:
-        - match: '\]'
+        - match: '{{seq_close}}'
           scope: entity.name.class.seq.magma
           pop: true
         - include: type_list
         - include: illegal
 
   REQ_intrinsic_next_argument_POP:
-    - match: ','
+    - match: '{{comma}}'
       set: REQ_intrinsic_argument_list_POP
-    - match: ':'
+    - match: '{{colon}}'
       set: REQ_intrinsic_optional_argument_list_POP
-    - match: '\)'
+    - match: '{{paren_close}}'
       pop: true
     - include: illegal
 
@@ -1389,7 +1450,7 @@ contexts:
     - include: illegal
 
   OPT_intrinsic_return_type_next_POP:
-    - match: ','
+    - match: '{{comma}}'
       set:
         - OPT_intrinsic_return_type_next_POP
         - REQ_type_POP
@@ -1449,7 +1510,7 @@ contexts:
     - match: '\bwhen\b'
       scope: keyword.other.magma
       set:
-        - match: ':'
+        - match: '{{colon}}'
           set: case_body_POP
         - include: expression
     - match: '\belse\b'
@@ -1458,7 +1519,7 @@ contexts:
     - include: statement
 
   case_args_POP:
-    - match: ':'
+    - match: '{{colon}}'
       pop: true
     - include: expression
 
@@ -1467,7 +1528,7 @@ contexts:
   # sprintf_call:
   #   - match: '\bSprintf\b'
   #     push:
-  #       - match: '\('
+  #       - match: '{{paren_open}}'
   #         set:
   #           - match: '"'
   #             set:
@@ -1484,7 +1545,7 @@ contexts:
   # PARENTHESES
 
   parentheses:
-    - match: '\('
+    - match: '{{paren_open}}'
       push:
         - parentheses_METASCOPE_POP
         - parentheses_2_POP
@@ -1495,155 +1556,278 @@ contexts:
       pop: true
 
   parentheses_2_POP:
-    - match: '\)'
+    - match: '{{paren_close}}'
       set: OPT_post_operator_POP
     - include: expression
 
   # SET
 
   set:
-    - match: '\{'
+    - match: '{{set_open}}'
       push:
         - set_METASCOPE_POP
-        - set_2_POP
+        - set_start_POP
 
   set_METASCOPE_POP:
     - meta_scope: meta.expression.set.magma
     - match: ''
       pop: true
 
-  set_2_POP:
-    - match: '\}'
-      set: OPT_post_operator_POP
-    - match: ':'
+  set_start_POP:
+    - include: set_end_POP
+    - match: '{{colon}}'
       set:
-        - match: '\bin\b'
-          scope: keyword.other.magma
-          set:
-            - match: '\}'
-              set: OPT_post_operator_POP
-            - match: '\|'
-              set:
-                - match: '\}'
-                  set: OPT_post_operator_POP
-                - include: expression
-            - include: expression
-        - include: expression
+        - set_middle_POP
+        - REQ_quantifier_list_POP
+
+  set_middle_POP:
+    - include: set_end_POP
+    - match: '{{comma}}'
+      set:
+        - set_middle_POP
+        - REQ_quantifier_list_POP
+    - match: '{{bar}}'
+      set: set_end_POP
+
+  set_end_POP:
+    - match: '{{set_close}}'
+      set: OPT_post_operator_POP
     - include: expression
     
   # SEQ
 
   seq:
-    - match: '\['
+    - match: '{{seq_open}}'
       push:
         - seq_METASCOPE_POP
-        - seq_2_POP
+        - seq_start_POP
 
   seq_METASCOPE_POP:
     - meta_scope: meta.expression.seq.magma
     - match: ''
       pop: true
 
-  seq_2_POP:
-    - match: '\]'
+  seq_start_POP:
+    - include: seq_end_POP
+    - match: '{{colon}}'
+      set:
+        - seq_middle_POP
+        - REQ_quantifier_list_POP
+
+  seq_middle_POP:
+    - include: seq_end_POP
+    - match: '{{comma}}'
+      set:
+        - seq_middle_POP
+        - REQ_quantifier_list_POP
+    - match: '{{bar}}'
+      set: seq_end_POP
+
+  seq_end_POP:
+    - match: '{{seq_close}}'
       set: OPT_post_operator_POP
-    - match: ':'
+    - include: expression
+
+  REQ_quantifier_list_POP:
+    - match: '{{identifier}}'
+      scope: variable.other
       set:
         - match: '\bin\b'
           scope: keyword.other.magma
-          set:
-            - match: '\]'
-              set: OPT_post_operator_POP
-            - match: '\|'
-              set:
-                - match: '\]'
-                  set: OPT_post_operator_POP
-                - include: expression
-            - include: expression
-        - include: expression
-    - include: expression
-    
+          pop: true
+        - include: illegal
+    - include: illegal
+
   # ISET
 
   iset:
-    - match: '\{@'
+    - match: '{{iset_open}}'
       push:
         - iset_METASCOPE_POP
-        - iset_2_POP
+        - iset_start_POP
 
   iset_METASCOPE_POP:
     - meta_scope: meta.expression.iset.magma
     - match: ''
       pop: true
 
-  iset_2_POP:
-    - match: '@\}'
-      set: OPT_post_operator_POP
-    - match: ':'
+  iset_start_POP:
+    - include: iset_end_POP
+    - match: '{{colon}}'
       set:
-        - match: '\bin\b'
-          scope: keyword.other.magma
-          set:
-            - match: '@\}'
-              set: OPT_post_operator_POP
-            - match: '\|'
-              set:
-                - match: '@\}'
-                  set: OPT_post_operator_POP
-                - include: expression
-            - include: expression
-        - include: expression
+        - iset_middle_POP
+        - REQ_quantifier_list_POP
+
+  iset_middle_POP:
+    - include: iset_end_POP
+    - match: '{{comma}}'
+      set:
+        - iset_middle_POP
+        - REQ_quantifier_list_POP
+    - match: '{{bar}}'
+      set: iset_end_POP
+
+  iset_end_POP:
+    - match: '{{iset_close}}'
+      set: OPT_post_operator_POP
     - include: expression
     
   # MSET
 
   mset:
-    - match: '\{\*'
+    - match: '{{mset_open}}'
       push:
         - mset_METASCOPE_POP
-        - mset_2_POP
+        - mset_start_POP
 
   mset_METASCOPE_POP:
     - meta_scope: meta.expression.mset.magma
     - match: ''
       pop: true
 
-  mset_2_POP:
-    - match: '\*\}'
-      set: OPT_post_operator_POP
-    - match: ':'
+  mset_start_POP:
+    - include: mset_end_POP
+    - match: '{{colon}}'
       set:
-        - match: '\bin\b'
-          scope: keyword.other.magma
-          set:
-            - match: '\*\}'
-              set: OPT_post_operator_POP
-            - match: '\|'
-              set:
-                - match: '\*\}'
-                  set: OPT_post_operator_POP
-                - include: expression
-            - include: expression
-        - include: expression
+        - mset_middle_POP
+        - REQ_quantifier_list_POP
+
+  mset_middle_POP:
+    - include: mset_end_POP
+    - match: '{{comma}}'
+      set:
+        - mset_middle_POP
+        - REQ_quantifier_list_POP
+    - match: '{{bar}}'
+      set: mset_end_POP
+
+  mset_end_POP:
+    - match: '{{mset_close}}'
+      set: OPT_post_operator_POP
     - include: expression
     
   # TUPLE
 
   tuple:
-    - match: '<'
+    - match: '{{tuple_open}}'
       push:
         - tuple_METASCOPE_POP
-        - tuple_2_POP
+        - tuple_end_POP
 
   tuple_METASCOPE_POP:
     - meta_scope: meta.expression.tuple.magma
     - match: ''
       pop: true
 
-  tuple_2_POP:
-    - match: '>'
+  tuple_end_POP:
+    - match: '{{tuple_close}}'
       set: OPT_post_operator_POP
     - include: expression
+
+  # FORALL
+
+  forall_expression:
+    - match: '\bforall\b'
+      scope: keyword.other.magma
+      push:
+        - forall_METASCOPE_POP
+        - REQ_quantified_set_POP
+        - OPT_paren_ident_list_paren_POP
+
+  forall_METASCOPE_POP:
+    - meta_scope: meta.expression.forall.magma
+    - match: ''
+      pop: true
+
+  OPT_paren_ident_list_paren_POP:
+    - match: '{{paren_open}}'
+      set:
+        - match: '{{paren_close}}'
+          pop: true
+        - match: ''
+          set: REQ_ident_list_paren_POP
+    - match: '(?=.)'
+      pop: true
+
+  REQ_ident_list_paren_POP:
+    - match: '{{identifier}}'
+      scope: variable.other
+      set:
+        - match: '{{comma}}'
+          set: REQ_ident_list_paren_POP
+        - match: '{{paren_close}}'
+          pop: true
+        - include: illegal
+    - include: illegal
+
+  REQ_quantified_set_POP:
+    - match: '{{set_open}}'
+      set: quantified_set_start_POP
+    - include: illegal
+
+  quantified_set_start_POP:
+    - include: quantified_set_end_POP
+    - match: '{{colon}}'
+      set:
+        - quantified_set_middle_POP
+        - REQ_quantifier_list_POP
+
+  quantified_set_middle_POP:
+    - include: quantified_set_end_POP
+    - match: '{{comma}}'
+      set:
+        - quantified_set_middle_POP
+        - REQ_quantifier_list_POP
+    - match: '{{bar}}'
+      set: quantified_set_end_POP
+
+  quantified_set_end_POP:
+    - match: '{{set_close}}'
+      set: OPT_post_operator_POP
+    - include: expression
+
+  # EXISTS
+
+  exists_expression:
+    - match: '\bexists\b'
+      scope: keyword.other.magma
+      push:
+        - exists_METASCOPE_POP
+        - REQ_quantified_set_POP
+        - OPT_paren_ident_list_paren_POP
+
+  exists_METASCOPE_POP:
+    - meta_scope: meta.expression.exists.magma
+    - match: ''
+      pop: true
+
+  # RANDOM
+
+  random_expression:
+    - match: '\brandom\b'
+      scope: keyword.other.magma
+      push:
+        - random_METASCOPE_POP
+        - REQ_quantified_set_POP
+
+  random_METASCOPE_POP:
+    - meta_scope: meta.expression.random.magma
+    - match: ''
+      pop: true
+
+  # REP
+
+  rep_expression:
+    - match: '\brep\b'
+      scope: keyword.other.magma
+      push:
+        - rep_METASCOPE_POP
+        - REQ_quantified_set_POP
+
+  rep_METASCOPE_POP:
+    - meta_scope: meta.expression.rep.magma
+    - match: ''
+      pop: true
 
   # UNDERSCORE
 
@@ -1674,8 +1858,8 @@ contexts:
 
   # RESERVED WORDS
 
-  reserved_words:
-    - match: '\b(_|adj|and|assert|assert2|assert3|assigned|break|by|case|cat|catch|clear|cmpeq|cmpne|continue|declare|default|delete|diff|div|do|elif|else|end|eq|error|eval|exists|exit|false|for|forall|forward|fprintf|freeze|function|ge|gt|if|iload|import|in|intrinsic|is|join|le|load|local|lt|meet|mod|ne|not|notadj|notin|notsubset|or|print|printf|procedure|quit|random|read|readi|repeat|require|requirege|requirerange|restore|return|save|sdiff|select|subset|then|time|to|true|try|until|vprint|vprintf|vtime|when|where|while|xor)\b'
+  reserved_word:
+    - match: '{{reserved_word}}'
       scope: invalid.illegal.magma
 
   # HELP

@@ -3,6 +3,8 @@
 
 # NOTE: whenever we see output, the debugger or the help tool, we pop out of the main magma scope (and immediately push it back on again) to stop syntax errors from propagating
 
+# TODO: put a meta scope around output so that it can be easily selected
+
 name: Magma Interactive (experimental)
 scope: source.interactive.magma-experimental
 
@@ -48,6 +50,15 @@ contexts:
   debugger:
     - match: '(?=^debug> )'
       set:
+        - debugger_METASCOPE_POP
+        - debugger_2_POP
+
+  debugger_METASCOPE_POP:
+    - meta_scope: meta.debug.magma
+    - match: ''
+      pop: true
+
+  debugger_2_POP:
 
         - match: 'debug> '
           scope: interactive.prompt.magma.debug
@@ -91,6 +102,15 @@ contexts:
   help:
     - match: '(?=^\?\?> )'
       set:
+        - help_METASCOPE_POP
+        - help_2_POP
+
+  help_METASCOPE_POP:
+    - meta_scope: meta.help.magma
+    - match: ''
+      pop: true
+
+  help_2_POP:
 
         - match: '^\?\?> '
           scope: interactive.prompt.magma.help

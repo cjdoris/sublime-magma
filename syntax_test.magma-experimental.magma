@@ -358,23 +358,24 @@ foo()["badger"][12]`hello.goodbye""foo";
 "hello" :Magma;
 ///      ^ keyword.other
 
-{x : x in foo | x ne 12}`hello;
-/// <- meta.expression.set
-///    ^ keyword.other
-///                    ^ meta.expression.set
-///                     ^ keyword.operator
+myset := {x : x in foo | x ne 12}`hello;
+///       ^ meta.expression.set
+///             ^ keyword.other
+///                             ^ meta.expression.set
+///                              ^ keyword.operator
 
-[x : x in blah];
-/// <- meta.expression.seq
-///    ^ keyword.other
+myseq := [x : x in blah, y in GetStuff()];
+///       ^ meta.expression.seq
+///             ^ keyword.other
+///                        ^ keyword.other
 
-{* y : y in blah *};
-/// <- meta.expression.mset
-///      ^ keyword.other
+mymset := {* y : y in blah *};
+///       ^ meta.expression.mset
+///                ^ keyword.other
 
-{@ z : z in thingy @};
-/// <- meta.expression.iset
-///      ^ keyword.other
+myiset := {@ z : z in thingy @};
+///       ^ meta.expression.iset
+///                ^ keyword.other
 
 t := <x in X, false, 12>;
 ///  ^ meta.expression.tuple
@@ -385,3 +386,37 @@ t := <x in X, false, 12>;
 recformat<x,y,z>;
 ///      ^ meta.operator.constructor
 
+if assigned x then
+/// <- keyword.other
+/// ^ keyword.other
+///           ^ keyword.other
+  y +:= (eval x) cat [10..100 by 10];
+/// ^ keyword.operator.assignment
+///      ^ keyword.other
+///              ^ keyword.operator
+///                  ^ meta.expression.seq
+///                     ^ keyword.operator
+///                           ^ keyword.operator
+end if;
+/// <- keyword.other
+/// ^ keyword.other
+
+x := forall(a,b,c){x : x in stuff | Foo(x)};
+///  ^ keyword.other
+///  ^ meta.expression.forall
+///                      ^ keyword.other
+
+x := exists(t){x : x in stuff | Foo(x)};
+///  ^ keyword.other
+///  ^ meta.expression.exists
+///                  ^ keyword.other
+
+x := random{x : x in stuff | Foo(x)};
+///  ^ keyword.other
+///  ^ meta.expression.random
+///               ^ keyword.other
+
+x := rep{x : x in stuff | Foo(x)};
+///  ^ keyword.other
+///  ^ meta.expression.rep
+///            ^ keyword.other
