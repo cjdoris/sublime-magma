@@ -95,6 +95,18 @@ x,y,_ := 12;
 %! this is a system call with no extra syntax (for in print "")
 /// <- keyword.other
 
+% 1 12
+/// <- keyword.other
+  /// <- constant.numeric
+/// ^ constant.numeric
+
+%p
+/// <- keyword.other
+
+%s 4378
+/// <- keyword.other
+   /// <- constant.numeric
+
 vprint GaloisGroup, 12: "hello there", x;
 /// <- keyword.other
 ///    ^ entity.name.class.verbosity
@@ -295,11 +307,11 @@ end intrinsic;
 /// <- keyword.other
 /// ^ keyword.other
 
-x +:= y^2 where y is Random();
+x +:= y^2 + z where y,z is Random2();
 /// ^ keyword.operator.assignment
-///       ^ keyword.other
-///       ^ meta.expression.where
-///               ^ keyword.other
+///           ^ keyword.other
+///           ^ meta.expression.where
+///                     ^ keyword.other
 
 break;
 /// <- keyword.other
@@ -364,18 +376,38 @@ myset := {x : x in foo | x ne 12}`hello;
 ///                             ^ meta.expression.set
 ///                              ^ keyword.operator
 
+myset := {Rationals() | 1,2,3,4,5};
+///      ^ meta.expression.set
+///                              ^ meta.expression.set
+///                               ^ -meta.expression.set
+
 myseq := [x : x in blah, y in GetStuff()];
 ///       ^ meta.expression.seq
 ///             ^ keyword.other
 ///                        ^ keyword.other
 
+myseq := [Integers() | 1,2,3,4,5];
+///      ^ meta.expression.seq
+///                             ^ meta.expression.seq
+///                              ^ -meta.expression.seq
+
 mymset := {* y : y in blah *};
 ///       ^ meta.expression.mset
 ///                ^ keyword.other
 
+mymset := {*RealField() | 1,2,3,4,5*};
+///       ^ meta.expression.mset
+///                                 ^ meta.expression.mset
+///                                  ^ -meta.expression.mset
+
 myiset := {@ z : z in thingy @};
 ///       ^ meta.expression.iset
 ///                ^ keyword.other
+
+myiset := {@ComplexField() | 1,2,3,4,5@};
+///       ^ meta.expression.iset
+///                                    ^ meta.expression.iset
+///                                     ^ -meta.expression.iset
 
 t := <x in X, false, 12>;
 ///  ^ meta.expression.tuple
@@ -385,6 +417,12 @@ t := <x in X, false, 12>;
 
 recformat<x,y,z>;
 ///      ^ meta.operator.constructor
+
+m := hom<F -> K | x :-> 12, y :-> y^2>;
+///     ^ meta.operator.constructor
+///               ^ variable.other
+///                         ^ variable.other
+///                                  ^ meta.operator.constructor
 
 if assigned x then
 /// <- keyword.other
@@ -420,3 +458,11 @@ x := rep{x : x in stuff | Foo(x)};
 ///  ^ keyword.other
 ///  ^ meta.expression.rep
 ///            ^ keyword.other
+
+case<#G | 1: "one", 2: "two", 3: "three", default: "other">[3];
+/// <- keyword.other
+/// ^ meta.operator.constructor
+///                                       ^ keyword.other
+///                                                       ^ meta.operator.constructor
+///                                                        ^ -meta.operator.constructor
+///                                                        ^ meta.operator.indexing
