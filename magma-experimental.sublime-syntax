@@ -24,6 +24,8 @@ variables:
   iset_close: '@\}'
   mset_open: '\{\*'
   mset_close: '\*\}'
+  list_open: '\[\*'
+  list_close: '\*\]'
   set_open: '\{(?![@\*])'
   set_close: '(?<![@\*])\}'
   bar: '\|'
@@ -46,7 +48,7 @@ variables:
   plus: '\+'
   minus: '-(?![>])'
   divide: '/(?![/])'
-  multiply: '\*'
+  multiply: '\*(?![\]\}])'
   power: '\^'
   arithmetic_operator: '({{plus}}|{{minus}}|{{multiply}}|{{divide}}|{{power}})(?![:\}])'
   tilde: '~'
@@ -62,6 +64,8 @@ variables:
   bang: '!'
   at: '@(?![@])'
   atat: '@'
+  anychar: '.'
+  LF_anychar: '(?=.)'
 
 
 contexts:
@@ -154,14 +158,19 @@ contexts:
     - include: mset
     - include: iset
     - include: set
+    - include: list
     - include: seq
     - include: tuple
 
   # UTILS
 
   illegal:
-    - match: '.'
+    - match: '{{anychar}}'
       scope: invalid.illegal.magma
+
+  POP:
+    - match: ''
+      pop: true
 
   string_chars:
     - match: '{{escape_char}}'
@@ -174,7 +183,7 @@ contexts:
     - match: '{{bad_format_char}}'
       scope: invalid.illegal.magma
 
-  # PROTOTYPE
+  # PROTOTYPE (WHITESPACE AND COMMENTS)
 
   prototype:
     - include: space
@@ -244,8 +253,7 @@ contexts:
     - include: dot_operator_POP
     - include: constructor_operator_POP
     - include: arithmetic_post_operator_POP
-    - match: '(?=.)'
-      pop: true
+    - include: POP
 
   arithmetic_post_operator_POP:
     - match: '{{arithmetic_operator}}'
@@ -260,13 +268,13 @@ contexts:
 
   constructor_METASCOPE_POP:
     - meta_scope: meta.operator.constructor.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   constructor_operator_2_POP:
     - match: '{{arrow}}'
     - match: '{{mapsto}}'
     - match: '{{bar}}'
+    - match: '{{assign}}'
     - match: '{{constructor_close}}'
       set: OPT_post_operator_POP
     - include: expression_list
@@ -279,8 +287,7 @@ contexts:
 
   function_call_METASCOPE_POP:
     - meta_scope: meta.operator.function_call.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   function_call_operator_2_POP:
     - match: '{{paren_close}}'
@@ -427,8 +434,7 @@ contexts:
         - include: format_string_chars
         - match: '{{string_close}}'
           pop: true
-    - match: ''
-      pop: true
+    - include: POP
 
   # VPRINTF
 
@@ -665,8 +671,7 @@ contexts:
 
   statement_METASCOPE_POP:
     - meta_scope: meta.statement.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   # SAVE
 
@@ -679,8 +684,7 @@ contexts:
 
   save_METASCOPE_POP:
     - meta_scope: meta.statement.save.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   # RESTORE
 
@@ -693,8 +697,7 @@ contexts:
 
   restore_METASCOPE_POP:
     - meta_scope: meta.statement.restore.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   # IF
 
@@ -708,8 +711,7 @@ contexts:
 
   if_METASCOPE_POP:
     - meta_scope: meta.statement.if.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   if_then_POP:
     - match: '\bthen\b'
@@ -747,8 +749,7 @@ contexts:
 
   while_METASCOPE_POP:
     - meta_scope: meta.statement.while.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   while_do_POP:
     - match: '\bdo\b'
@@ -777,8 +778,7 @@ contexts:
 
   repeat_METASCOPE_POP:
     - meta_scope: meta.statement.repeat.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   repeat_body_POP:
     - match: '\buntil\b'
@@ -813,18 +813,17 @@ contexts:
   # ASSIGNMENT OR EXPRESSION
   
   assignment_or_expression_statement:
-    - match: '(?=.)'
+    - match: '{{LF_anychar}}'
       push:
         - assignment_or_expression_METASCOPE_POP
         - assignment_or_expression_statement_2_POP
 
   assignment_or_expression_METASCOPE_POP:
     - meta_scope: meta.statement.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   assignment_or_expression_statement_2_POP:
-      - match: '(\b(div|cat|meet|join|diff|sdiff|mod|or|and|xor)|(\+|-|/|\*|^))?(:=)'
+      - match: '(\b(div|cat|meet|join|diff|sdiff|mod|or|and|xor)|(\+|-|/|\*|^))?({{assign}})'
         scope: keyword.operator.assignment.magma
         set: expression_statement_POP
       - include: print_level_POP
@@ -854,15 +853,13 @@ contexts:
 
   history_other_METASCOPE_POP:
     - meta_scope: meta.statement.history.other.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   OPT_integer_POP:
     - match: '{{integer}}'
       scope: constant.numeric.magma
       pop: true
-    - match: ''
-      pop: true
+    - include: POP
 
   REQ_eol_POP:
     - match: '$'
@@ -880,8 +877,7 @@ contexts:
 
   declare_METASCOPE_POP:
     - meta_scope: meta.statement.declare.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   declare_statement_2_POP:
     - include: declare_type_POP
@@ -953,8 +949,7 @@ contexts:
                   pop: true
                 - include: illegal
             - include: illegal
-        - match: '(?=.)'
-          pop: true
+        - include: POP
     - include: illegal
 
   OPT_colon_ident_list_statement_POP:
@@ -976,8 +971,7 @@ contexts:
 
   for_METASCOPE_POP:
     - meta_scope: meta.statement.for.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   for_body_POP:
     - match: '\bend\b'
@@ -1030,8 +1024,7 @@ contexts:
 
   try_METASCOPE_POP:
     - meta_scope: meta.statement.try.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   try_body_POP:
     - match: '\bcatch\b'
@@ -1061,8 +1054,7 @@ contexts:
 
   require_METASCOPE_POP:
     - meta_scope: meta.statement.require.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   require_arguments_POP:
     - match: '{{colon}}'
@@ -1080,8 +1072,7 @@ contexts:
 
   requirerange_METASCOPE_POP:
     - meta_scope: meta.statement.requirerange.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   # REQUIREGE
 
@@ -1094,8 +1085,7 @@ contexts:
 
   requirege_METASCOPE_POP:
     - meta_scope: meta.statement.requirege.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   # FUNCTION
 
@@ -1113,7 +1103,7 @@ contexts:
     - match: '{{identifier}}'
       scope: entity.name.function.function.magma
       pop: true
-    - match: '(?=.)'
+    - match: '{{LF_anychar}}'
       pop: true
 
   function_expression:
@@ -1126,13 +1116,11 @@ contexts:
 
   function_METASCOPE_POP:
     - meta_scope: meta.statement.function.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   function_expression_METASCOPE_POP:
     - meta_scope: meta.expression.function.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   REQ_function_arguments_POP:
     - match: '{{paren_open}}'
@@ -1192,8 +1180,7 @@ contexts:
 
   return_METASCOPE_POP:
     - meta_scope: meta.statement.return.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   # BREAK
 
@@ -1207,13 +1194,12 @@ contexts:
 
   break_METASCOPE_POP:
     - meta_scope: meta.statement.break.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   OPT_ident_POP:
     - match: '{{identifier}}'
       pop: true
-    - match: '(?=.)'
+    - match: '{{LF_anychar}}'
       pop: true
 
   # CONTINUE
@@ -1228,8 +1214,7 @@ contexts:
 
   continue_METASCOPE_POP:
     - meta_scope: meta.statement.continue.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   # PROCEDURE
   
@@ -1253,19 +1238,17 @@ contexts:
 
   procedure_expression_METASCOPE_POP:
     - meta_scope: meta.expression.procedure.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   procedure_METASCOPE_POP:
     - meta_scope: meta.statement.procedure.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   OPT_procedure_name_POP:
     - match: '{{identifier}}'
       scope: entity.name.function.procedure.magma
       pop: true
-    - match: '(?=.)'
+    - match: '{{LF_anychar}}'
       pop: true
 
   REQ_procedure_arguments_POP:
@@ -1333,8 +1316,7 @@ contexts:
 
   intrinsic_METASCOPE_POP:
     - meta_scope: meta.statement.intrinsic.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   REQ_intrinsic_name_POP:
     - match: "{{identifier}}|{{symbol}}"
@@ -1368,8 +1350,7 @@ contexts:
   OPT_intrinsic_argument_type_POP:
     - match: '{{argtype}}'
       set: REQ_type_POP
-    - match: '(?=.)'
-      pop: true
+    - include: POP
 
   type_POP:
     - include: any_type_POP
@@ -1401,11 +1382,10 @@ contexts:
               pop: true
             - include: type_list
             - include: illegal
-        - match: '(?=.)'
-          pop: true
+        - include: POP
 
   type_list:
-    - match: '(?=.)'
+    - match: '{{LF_anychar}}'
       push: type_POP
 
   iset_type_POP:
@@ -1551,7 +1531,7 @@ contexts:
               pop: true
             - include: expression
         - include: illegal
-    - match: ''
+    - match: '{{LF_anychar}}'
       set:
         - match: '{{colon}}'
           set:
@@ -1570,7 +1550,7 @@ contexts:
             - OPT_post_operator_POP
             - constructor_METASCOPE_POP
             - case_expression_args_POP
-        - match: ''
+        - match: '{{LF_anychar}}'
           set:
             - case_METASCOPE_POP
             - case_body_POP
@@ -1578,8 +1558,7 @@ contexts:
 
   case_METASCOPE_POP:
     - meta_scope: meta.statement.case.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   case_body_POP:
     - match: '\bend\b'
@@ -1634,87 +1613,72 @@ contexts:
 
   parentheses_METASCOPE_POP:
     - meta_scope: meta.expression.parentheses.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   parentheses_2_POP:
     - match: '{{paren_close}}'
       set: OPT_post_operator_POP
     - include: expression
 
-  # SET
+  # SET {}
 
   set:
     - match: '{{set_open}}'
       push:
+        - OPT_post_operator_POP
         - set_METASCOPE_POP
-        - set_start_POP
+        - set_AT_universe_or_value_POP
 
   set_METASCOPE_POP:
     - meta_scope: meta.expression.set.magma
-    - match: ''
-      pop: true
+    - include: POP
 
-  set_start_POP:
+  set_AT_universe_or_value_POP:
+    - match: '{{bar}}'
+      set: set_AT_value_POP
     - match: '{{colon}}'
-      set:
-        - set_middle_POP
-        - REQ_quantifier_list_POP
-    - match: '{{bar}}'
-      set: set_end_POP
-    - include: set_end_POP
-
-  set_middle_POP:
+      set: set_AT_quantifier_POP
     - match: '{{comma}}'
-      set:
-        - set_middle_POP
-        - REQ_quantifier_list_POP
-    - match: '{{bar}}'
-      set: set_end_POP
-    - include: set_end_POP
-
-  set_end_POP:
+      set: set_AT_list_POP
     - match: '{{set_close}}'
-      set: OPT_post_operator_POP
-    - include: expression_list
-    
-  # SEQ
-
-  seq:
-    - match: '{{seq_open}}'
-      push:
-        - seq_METASCOPE_POP
-        - seq_start_POP
-
-  seq_METASCOPE_POP:
-    - meta_scope: meta.expression.seq.magma
-    - match: ''
       pop: true
+    - include: expression
 
-  seq_start_POP:
+  set_AT_value_POP:
     - match: '{{colon}}'
-      set:
-        - seq_middle_POP
-        - REQ_quantifier_list_POP
-    - match: '{{bar}}'
-      set: seq_end_POP
-    - include: seq_end_POP
-
-  seq_middle_POP:
+      set: set_AT_quantifier_POP
+    - match: '{{set_close}}'
+      pop: true
     - match: '{{comma}}'
-      set:
-        - seq_middle_POP
-        - REQ_quantifier_list_POP
-    - match: '{{bar}}'
-      set: seq_end_POP
-    - include: seq_end_POP
+      set: set_AT_list_POP
+    - include: expression
 
-  seq_end_POP:
-    - match: '{{seq_close}}'
-      set: OPT_post_operator_POP
+  set_AT_list_POP:
+    - match: '{{set_close}}'
+      pop: true
     - include: expression_list
 
-  REQ_quantifier_list_POP:
+  set_AT_quantifier_POP:
+    - match: ''
+      set:
+        - set_AT_next_quantifier_POP
+        - REQ_quantifier_POP
+
+  set_AT_next_quantifier_POP:
+    - match: '{{comma}}'
+      set: set_AT_quantifier_POP
+    - match: '{{bar}}'
+      set: set_AT_condition_POP
+    - match: '{{set_close}}'
+      pop: true
+    - include: expression
+
+  set_AT_condition_POP:
+    - match: '{{set_close}}'
+      pop: true
+    - include: expression
+    
+  quantifier_POP:
     - match: '{{identifier}}'
       scope: variable.other
       set:
@@ -1722,97 +1686,286 @@ contexts:
           scope: keyword.other.magma
           pop: true
         - include: illegal
+
+  REQ_quantifier_POP:
+    - include: quantifier_POP
     - include: illegal
 
-  # ISET
+  OPT_quantifier_POP:
+    - include: quantifier_POP
+    - include: POP
+
+  # SEQ []
+
+  seq:
+    - match: '{{seq_open}}'
+      push:
+        - OPT_post_operator_POP
+        - seq_METASCOPE_POP
+        - seq_AT_universe_or_value_POP
+
+  seq_METASCOPE_POP:
+    - meta_scope: meta.expression.seq.magma
+    - include: POP
+
+  seq_AT_universe_or_value_POP:
+    - match: '{{bar}}'
+      set: seq_AT_value_POP
+    - match: '{{colon}}'
+      set: seq_AT_quantifier_POP
+    - match: '{{comma}}'
+      set: seq_AT_list_POP
+    - match: '{{seq_close}}'
+      pop: true
+    - include: expression
+
+  seq_AT_value_POP:
+    - match: '{{colon}}'
+      set: seq_AT_quantifier_POP
+    - match: '{{seq_close}}'
+      pop: true
+    - match: '{{comma}}'
+      set: seq_AT_list_POP
+    - include: expression
+
+  seq_AT_list_POP:
+    - match: '{{seq_close}}'
+      pop: true
+    - include: expression_list
+
+  seq_AT_quantifier_POP:
+    - match: ''
+      set:
+        - seq_AT_next_quantifier_POP
+        - REQ_quantifier_POP
+
+  seq_AT_next_quantifier_POP:
+    - match: '{{comma}}'
+      set: seq_AT_quantifier_POP
+    - match: '{{bar}}'
+      set: seq_AT_condition_POP
+    - match: '{{seq_close}}'
+      pop: true
+    - include: expression
+
+  seq_AT_condition_POP:
+    - match: '{{seq_close}}'
+      pop: true
+    - include: expression
+
+
+  # ISET {@@}
 
   iset:
     - match: '{{iset_open}}'
       push:
+        - OPT_post_operator_POP
         - iset_METASCOPE_POP
-        - iset_start_POP
+        - iset_AT_universe_or_value_POP
 
   iset_METASCOPE_POP:
     - meta_scope: meta.expression.iset.magma
-    - match: ''
-      pop: true
+    - include: POP
 
-  iset_start_POP:
+  iset_AT_universe_or_value_POP:
+    - match: '{{bar}}'
+      set: iset_AT_value_POP
     - match: '{{colon}}'
-      set:
-        - iset_middle_POP
-        - REQ_quantifier_list_POP
-    - match: '{{bar}}'
-      set: iset_end_POP
-    - include: iset_end_POP
-
-  iset_middle_POP:
+      set: iset_AT_quantifier_POP
     - match: '{{comma}}'
-      set:
-        - iset_middle_POP
-        - REQ_quantifier_list_POP
-    - match: '{{bar}}'
-      set: iset_end_POP
-    - include: iset_end_POP
-
-  iset_end_POP:
+      set: iset_AT_list_POP
     - match: '{{iset_close}}'
-      set: OPT_post_operator_POP
+      pop: true
+    - include: expression
+
+  iset_AT_value_POP:
+    - match: '{{colon}}'
+      set: iset_AT_quantifier_POP
+    - match: '{{iset_close}}'
+      pop: true
+    - match: '{{comma}}'
+      set: iset_AT_list_POP
+    - include: expression
+
+  iset_AT_list_POP:
+    - match: '{{iset_close}}'
+      pop: true
     - include: expression_list
+
+  iset_AT_quantifier_POP:
+    - match: ''
+      set:
+        - iset_AT_next_quantifier_POP
+        - REQ_quantifier_POP
+
+  iset_AT_next_quantifier_POP:
+    - match: '{{comma}}'
+      set: iset_AT_quantifier_POP
+    - match: '{{bar}}'
+      set: iset_AT_condition_POP
+    - match: '{{iset_close}}'
+      pop: true
+    - include: expression
+
+  iset_AT_condition_POP:
+    - match: '{{iset_close}}'
+      pop: true
+    - include: expression
     
-  # MSET
+  # MSET {**}
 
   mset:
     - match: '{{mset_open}}'
       push:
+        - OPT_post_operator_POP
         - mset_METASCOPE_POP
-        - mset_start_POP
+        - mset_AT_universe_or_value_POP
 
   mset_METASCOPE_POP:
     - meta_scope: meta.expression.mset.magma
-    - match: ''
-      pop: true
+    - include: POP
 
-  mset_start_POP:
+  mset_AT_universe_or_value_POP:
+    - match: '{{bar}}'
+      set: mset_AT_value_POP
     - match: '{{colon}}'
-      set:
-        - mset_middle_POP
-        - REQ_quantifier_list_POP
-    - match: '{{bar}}'
-      set: mset_end_POP
-    - include: mset_end_POP
-
-  mset_middle_POP:
+      set: mset_AT_quantifier_POP
     - match: '{{comma}}'
-      set:
-        - mset_middle_POP
-        - REQ_quantifier_list_POP
-    - match: '{{bar}}'
-      set: mset_end_POP
-    - include: mset_end_POP
-
-  mset_end_POP:
+      set: mset_AT_list_POP
     - match: '{{mset_close}}'
-      set: OPT_post_operator_POP
+      pop: true
+    - include: expression
+
+  mset_AT_value_POP:
+    - match: '{{colon}}'
+      set: mset_AT_quantifier_POP
+    - match: '{{mset_close}}'
+      pop: true
+    - match: '{{comma}}'
+      set: mset_AT_list_POP
+    - include: expression
+
+  mset_AT_list_POP:
+    - match: '{{mset_close}}'
+      pop: true
     - include: expression_list
+
+  mset_AT_quantifier_POP:
+    - match: ''
+      set:
+        - mset_AT_next_quantifier_POP
+        - REQ_quantifier_POP
+
+  mset_AT_next_quantifier_POP:
+    - match: '{{comma}}'
+      set: mset_AT_quantifier_POP
+    - match: '{{bar}}'
+      set: mset_AT_condition_POP
+    - match: '{{mset_close}}'
+      pop: true
+    - include: expression
+
+  mset_AT_condition_POP:
+    - match: '{{mset_close}}'
+      pop: true
+    - include: expression
+
     
-  # TUPLE
+  # TUPLE <>
 
   tuple:
     - match: '{{tuple_open}}'
       push:
+        - OPT_post_operator_POP
         - tuple_METASCOPE_POP
-        - tuple_end_POP
+        - tuple_AT_value_POP
 
   tuple_METASCOPE_POP:
     - meta_scope: meta.expression.tuple.magma
-    - match: ''
-      pop: true
+    - include: POP
 
-  tuple_end_POP:
+  tuple_AT_value_POP:
+    - match: '{{colon}}'
+      set: tuple_AT_quantifier_POP
     - match: '{{tuple_close}}'
-      set: OPT_post_operator_POP
+      pop: true
+    - match: '{{comma}}'
+      set: tuple_AT_list_POP
+    - include: expression
+
+  tuple_AT_list_POP:
+    - match: '{{tuple_close}}'
+      pop: true
     - include: expression_list
+
+  tuple_AT_quantifier_POP:
+    - match: ''
+      set:
+        - tuple_AT_next_quantifier_POP
+        - REQ_quantifier_POP
+
+  tuple_AT_next_quantifier_POP:
+    - match: '{{comma}}'
+      set: tuple_AT_quantifier_POP
+    - match: '{{bar}}'
+      set: tuple_AT_condition_POP
+    - match: '{{tuple_close}}'
+      pop: true
+    - include: expression
+
+  tuple_AT_condition_POP:
+    - match: '{{tuple_close}}'
+      pop: true
+    - include: expression
+
+
+  # LIST [**]
+
+  list:
+    - match: '{{list_open}}'
+      push:
+        - OPT_post_operator_POP
+        - list_METASCOPE_POP
+        - list_AT_value_POP
+
+  list_METASCOPE_POP:
+    - meta_scope: meta.expression.list.magma
+    - include: POP
+
+  list_AT_value_POP:
+    - match: '{{colon}}'
+      set: list_AT_quantifier_POP
+    - match: '{{list_close}}'
+      pop: true
+    - match: '{{comma}}'
+      set: list_AT_list_POP
+    - include: expression
+
+  list_AT_list_POP:
+    - match: '{{list_close}}'
+      pop: true
+    - include: expression_list
+
+  list_AT_quantifier_POP:
+    - match: ''
+      set:
+        - list_AT_next_quantifier_POP
+        - REQ_quantifier_POP
+
+  list_AT_next_quantifier_POP:
+    - match: '{{comma}}'
+      set: list_AT_quantifier_POP
+    - match: '{{bar}}'
+      set: list_AT_condition_POP
+    - match: '{{list_close}}'
+      pop: true
+    - include: expression
+
+  list_AT_condition_POP:
+    - match: '{{list_close}}'
+      pop: true
+    - include: expression
+
 
   # FORALL
 
@@ -1826,8 +1979,7 @@ contexts:
 
   forall_METASCOPE_POP:
     - meta_scope: meta.expression.forall.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   OPT_paren_ident_list_paren_POP:
     - match: '{{paren_open}}'
@@ -1836,8 +1988,7 @@ contexts:
           pop: true
         - match: ''
           set: REQ_ident_list_paren_POP
-    - match: '(?=.)'
-      pop: true
+    - include: POP
 
   REQ_ident_list_paren_POP:
     - match: '{{identifier}}'
@@ -1859,14 +2010,14 @@ contexts:
     - match: '{{colon}}'
       set:
         - quantified_set_middle_POP
-        - REQ_quantifier_list_POP
+        - REQ_quantifier_POP
     - include: quantified_set_end_POP
 
   quantified_set_middle_POP:
     - match: '{{comma}}'
       set:
         - quantified_set_middle_POP
-        - REQ_quantifier_list_POP
+        - REQ_quantifier_POP
     - match: '{{bar}}'
       set: quantified_set_end_POP
     - include: quantified_set_end_POP
@@ -1888,8 +2039,7 @@ contexts:
 
   exists_METASCOPE_POP:
     - meta_scope: meta.expression.exists.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   # RANDOM
 
@@ -1902,8 +2052,7 @@ contexts:
 
   random_METASCOPE_POP:
     - meta_scope: meta.expression.random.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   # REP
 
@@ -1916,8 +2065,7 @@ contexts:
 
   rep_METASCOPE_POP:
     - meta_scope: meta.expression.rep.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   # UNDERSCORE
 
@@ -1937,8 +2085,7 @@ contexts:
 
   select_METASCOPE_POP:
     - meta_scope: meta.expression.select.magma
-    - match: ''
-      pop: true
+    - include: POP
 
   select_expression_2_POP:
     - match: '\belse\b'
