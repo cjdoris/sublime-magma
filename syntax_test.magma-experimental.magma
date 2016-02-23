@@ -20,7 +20,7 @@
 ///                 ^ string
 ///                  ^ - string
 
-"not a comment: // /*"
+"not a comment: // /*";
 /// <- string
 ///             ^ string
 ///                ^ string

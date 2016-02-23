@@ -43,7 +43,7 @@ contexts:
         2: interactive.output.error.magma
       pop: true
 
-    - match: '^.*$'
+    - match: '^.+$'
       scope: interactive.output.magma
       pop: true
 
