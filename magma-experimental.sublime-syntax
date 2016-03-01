@@ -1604,7 +1604,7 @@ contexts:
   #           - include: REQ_function_call_arguments_POP
   #       - include: OPT_post_operator_POP
 
-  # PARENTHESES
+  # PARENTHESES (OR PERMUTATION LITERAL)
 
   parentheses:
     - match: '{{paren_open}}'
@@ -1619,6 +1619,18 @@ contexts:
   parentheses_2_POP:
     - match: '{{paren_close}}'
       set: OPT_post_operator_POP
+    - match: '{{comma}}'
+      set: permutation_literal_2_POP
+    - include: expression
+
+  permutation_literal_2_POP:
+    - match: '{{paren_close}}'
+      set:
+        - match: '{{paren_open}}'
+          set: permutation_literal_2_POP
+        - match: '{{LF_anychar}}'
+          set: OPT_post_operator_POP
+    - match: '{{comma}}'
     - include: expression
 
   # SET {}
