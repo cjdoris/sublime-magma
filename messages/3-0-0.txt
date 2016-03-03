@@ -1,0 +1,11 @@
+IMPORTANT! MAJOR UPDATE!
+
+In this version we move over to the new .sublime-syntax format for syntax files. This means the syntax highlighting you are used to may look a little different. The old format syntax files remain in the package, called "Magma (old)", etc., but these are now deprecated and will not be improved in the future. If you are using a build of Sublime Text older than 3103 then you will have to use the old versions.
+
+* The new syntax files include scopes around various code blocks, making it easy to select an entire function, for example, with the "Expand Selection to Scope" command.
+
+* Anything which looks like a variable is now given the "variable" scope, whereas optional function parameter names are given the "variable.parameter" scope. If your theme highlights variables, you probably want to make the "variable" colour un-obtrusive.
+
+* The "Magma Interactive" syntax highlighter is for interactive Magma sessions (useful if you use the REPL package, for example). For theming, the main scopes to be aware of are "interactive.prompt" (highlights the prompt), "interactive.output" (highlights any output), "interactive.output.error" (highlights any error messages in the output)
+
+* Keywords are now included as completions.

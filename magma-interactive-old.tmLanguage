@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>name</key>
-	<string>Magma Interactive</string>
+	<string>Magma Interactive (old)</string>
 	<key>patterns</key>
 	<array>
 		<dict>

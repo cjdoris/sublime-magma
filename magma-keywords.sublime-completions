@@ -1,0 +1,5 @@
+{
+  "scope": "source.magma, source.interactive.magma",
+  "completions": ["adj", "and", "assert", "assert2", "assert3", "assigned", "break", "by", "case", "cat", "catch", "clear", "cmpeq", "cmpne", "continue", "declare", "default", "delete", "diff", "div", "do", "elif", "else", "end", "eq", "error", "eval", "exists", "exit", "false", "for", "forall", "forward", "fprintf", "freeze", "function", "ge", "gt", "if", "iload", "import", "in", "intrinsic", "is", "join", "le", "load", "local", "lt", "meet", "mod", "ne", "not", "notadj", "notin", "notsubset", "or", "print", "printf", "procedure", "quit", "random", "read", "readi", "rep", "repeat", "require", "requirege", "requirerange", "restore", "return", "save", "sdiff", "select", "subset", "then", "time", "to", "true", "try", "until", "vprint", "vprintf", "vtime", "when", "where", "while", "xor"]
+  ]
+}

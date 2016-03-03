@@ -1,0 +1,641 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: Magma (old)
+scopeName: source.magma-old
+fileTypes: [magma, mag]
+uuid: 86b1670b-7756-4792-bdd1-1392d39d26a4
+
+patterns:
+  - include: '#block'
+
+repository:
+  function_keyword:
+    comment: Function definition keywords
+    begin: '\b(function|procedure)\b\s*([_A-Za-z][_A-Za-z0-9]*)?\b\s*'
+    end: '(?!\s*(\(|:))(?=.)\s*'
+    captures:
+      '1':
+        name: storage.type.function.magma
+      '2':
+        name: entity.name.function.magma
+    patterns:
+      - include: '#function_params'
+      - include: '#optparams'
+
+  function_params:
+    begin: '\(\s*'
+    end: '\)\s*|(?=:)\s*'
+    patterns:
+    - include: '#paramname'
+
+  intrinsic_keyword:
+    comment: intrinsics
+    begin: \b(intrinsic)\s+([_A-Za-z][_A-Za-z0-9]*\b|'[^']+')\s*
+    end: '(?!\s*(\(|{|->|:))(?=.)\s*'
+    beginCaptures:
+      '1':
+        name: storage.type.function.magma
+      '2':
+        name: entity.name.function.magma
+    patterns:
+    - include: '#intrinsic_params'
+    - include: '#optparams'
+    - include: '#intrinsic_returntypes'
+    - include: '#intrinsic_docstring'
+        
+  intrinsic_returntypes:
+    begin: '(?=->\s*)'
+    end: '(?!\s*(->|,))(?=.)\s*'
+    patterns:
+    - match: '\s*(->|,)\s*([_A-Za-z][_A-Za-z0-9]*)'
+      captures:
+        '2':
+          name: entity.name.class.magma
+    - match: '\s*(->|,)\s*(\[\]|{}|{\[\]}|{@@}|{\*\*}|<>)'
+
+  intrinsic_params:
+    begin: '\(\s*'
+    end: '\)\s*|(?=:)\s*'
+    patterns:
+    - include: '#intrinsic_paramtype'
+    - include: '#intrinsic_parens'
+    - include: '#paramname'
+
+  optparams:
+    begin: ':\s*'
+    end: '\)\s*'
+    patterns:
+    - include: '#optparam'
+    - include: '#expression'
+
+  optparam:
+    match: '\b([_A-Za-z][_A-Za-z0-9]*)\s*:='
+    captures:
+      '1':
+        name: variable.parameter.magma
+
+  intrinsic_parens:
+    begin: '\(\s*'
+    end: '\)\s*'
+    patterns:
+    - include: '#intrinsic_parens'
+
+  intrinsic_docstring:
+    begin: '{\s*'
+    end: '}\s*'
+    name: comment.block.documentation.magma
+    patterns:
+      - match: '\\.'
+
+  paramname:
+    match: '[_A-Za-z][_A-Za-z0-9]*'
+    name: variable.parameter.magma
+
+  intrinsic_paramtype:
+    begin: '(\b[_A-Za-z][_A-Za-z0-9]*)?\s*::\s*'
+    end: '(?!\s*([_A-Za-z]|\[|{|\.|<))(?=.)\s*'
+    beginCaptures:
+      '1':
+        name: variable.parameter.magma
+    patterns:
+    - include: '#type'
+
+  type:
+    patterns:
+    - include: '#any_type'
+    - include: '#simple_type'
+    - include: '#sequence_type'
+    - include: '#set_type'
+    - include: '#setseq_type'
+    - include: '#iset_type'
+    - include: '#mset_type'
+    - include: '#tuple_type'
+
+  any_type:
+    match: '\.'
+    name: entity.name.class.magma
+
+  simple_type:
+    patterns:
+    - begin: '([_A-Za-z][_A-Za-z0-9]*)\['
+      end: '\]'
+      beginCaptures:
+        '1':
+          name: entity.name.class.magma
+      patterns:
+      - include: '#type'
+    - match: '[_A-Za-z][_A-Za-z0-9]*'
+      name: entity.name.class.magma
+
+  sequence_type:
+    begin: '\['
+    end: '\]'
+    patterns:
+    - include: '#type'
+
+  set_type:
+    begin: '{'
+    end: '}'
+    patterns:
+    - include: '#type'
+
+  setseq_type:
+    begin: '{\['
+    end: '\]}'
+    patterns:
+    - include: '#type'
+
+  iset_type:
+    begin: '{@'
+    end: '@}'
+    patterns:
+    - include: '#type'
+
+  mset_type:
+    begin: '{\*'
+    end: '\*}'
+    patterns:
+    - include: '#type'
+
+  tuple_type:
+    begin: '<'
+    end: '>'
+    patterns:
+    - include: '#type'
+
+  line_comment:
+    comment: Line comments
+    match: '\/\/.*$\n?'
+    name: comment.line.double-slash.magma
+
+  block_comment:
+    comment: Block comments
+    begin: '\/\*'
+    end: '\*\/'
+    name: comment.block.magma
+
+  comment:
+    patterns:
+    - include: '#line_comment'
+    - include: '#block_comment'
+
+  syscall_statement:
+    match: '(%!)(.*)$'
+    captures:
+      '1': {name: keyword.other.magma}
+
+  printf_statement:
+    begin: '\b((printf)|(Sprintf\()|((vprintf)\s+([_A-Za-z][_A-Za-z0-9]*)\b(\s*,\s*([0-9]+)\b)?.*:))\s*(")'
+    end: '"'
+    beginCaptures:
+      '2':
+        name: keyword.other.magma
+      '5':
+        name: keyword.other.magma
+      '6':
+        name: entity.name.class.magma
+      '8':
+        name: constant.numeric.magma
+      '9':
+        name: string.quoted.double.magma
+    endCaptures:
+      '0':
+        name: string.quoted.double.magma
+    patterns:
+    - match: '\\.'
+      name: constant.character.escape.magma
+    - match: '(%([-]?[0-9]*(\.[0-9]*)?|\*)[oOmh])|(%%)'
+      name: constant.character.escape.magma
+    - match: '%'
+      name: invalid.illegal.magma
+    - match: '[^"\\%]'
+      name: string.quoted.double.magma
+
+  vtime_statement:
+    match: '\b(vtime)\s+([_A-Za-z][_A-Za-z0-9]*)\b'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: entity.name.class.magma}
+
+  vprint_statement:
+    match: '\b(vprintf?)\s+([_A-Za-z][_A-Za-z0-9]*)\b'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: entity.name.class.magma}
+
+  read_statement:
+    match: '\b(readi?)\s+([_A-Za-z][_A-Za-z0-9]*)\b'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: variable.other.magma}
+
+  local_statement:
+    match: '\b(local)\s+([_A-Za-z][_A-Za-z0-9]*)\b'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: variable.other.magma}
+
+  forward_statement:
+    match: '\b(forward)\s+([_A-Za-z][_A-Za-z0-9]*)\b'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: entity.name.function.magma}
+
+  declare_type_statement:
+    patterns:
+    - comment: Version with inheritances
+      begin: '(\bdeclare\s+type)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?\s*:'
+      end: ';'
+      beginCaptures:
+        '1':
+          name: keyword.other.magma
+        '2':
+          name: entity.name.class.magma
+        '4':
+          name: entity.name.class.magma
+      patterns:
+      - match: '\b[_A-Za-z][_A-Za-z0-9]*\b'
+        name: entity.name.class.magma
+    - comment: Simple version
+      match: '(\bdeclare\s+type)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?'
+      captures:
+        '1':
+          name: keyword.other.magma
+        '2':
+          name: entity.name.class.magma
+        '4':
+          name: entity.name.class.magma
+
+  declare_attributes_statement:
+    begin: '(\bdeclare\s+attributes)\s+([_A-Za-z][_A-Za-z0-9]*)(\s*\[\s*([_A-Za-z][_A-Za-z0-9]*)\s*\])?\s*:'
+    end: ';'
+    beginCaptures:
+      '1':
+        name: keyword.other.magma
+      '2':
+        name: entity.name.class.magma
+      '4':
+        name: entity.name.class.magma
+    patterns:
+    - match: '\b[_A-Za-z][_A-Za-z0-9]*\b'
+      name: variable.parameter.magma
+
+  declare_verbose_statement:
+    match: '(\bdeclare\s+verbose)(\s+([_A-Za-z][_A-Za-z0-9]*)\b(\s*,\s*([0-9]+)\b(\s*;)?)?)?'
+    captures:
+      '1': {name: keyword.other.magma}
+      '3': {name: entity.name.class.magma}
+      '5': {name: constant.numeric.magma}
+
+  function_call:
+    begin: '[_A-Za-z][_A-Za-z0-9]*\s*\('
+    end: '\)'
+    name: meta.function-call.magma
+    patterns:
+    - include: '#function_call_params'
+    - include: '#expression'
+
+  function_call_params:
+    patterns:
+    - match: '([_A-Za-z][_A-Za-z0-9]*)\s*(:=)'
+      captures:
+        '1': {name: variable.parameter.function.magma}
+    - match: '(~)\s*([_A-Za-z][_A-Za-z0-9]*)'
+      captures:
+        '1': {name: keyword.operator.other.magma}
+        '2': {name: variable.other.magma}
+
+  parens:
+    begin: '\('
+    end: '\)'
+    patterns:
+    - include: '#expression'
+
+  brackets:
+    begin: '\['
+    end: '\]'
+    patterns:
+    - include: '#set_builder_expression'
+
+  braces:
+    begin: '{'
+    end: '}'
+    patterns:
+    - include: '#set_builder_expression'
+
+  angles:
+    begin: '<'
+    end: '>'
+    patterns:
+    - include: '#expression'
+
+  indexed_set:
+    begin: '{@'
+    end: '@}'
+    patterns:
+    - include: '#set_builder_expression'
+
+  multi_set:
+    begin: '{\*'
+    end: '\*}'
+    patterns:
+    - include: '#set_builder_expression'
+
+  set_builder_quantifier:
+    match: '[:,]\s*([_A-Za-z][_A-Za-z0-9]*)\s+(in)\b'
+    captures:
+      '1': {name: variable.other.magma}
+      '2': {name: keyword.control.magma}
+
+  set_builder_expression:
+    patterns:
+    - include: '#set_builder_quantifier'
+    - include: '#expression'
+
+  expression_group:
+    patterns:
+    - include: '#function_call'
+    - include: '#indexed_set'
+    - include: '#multi_set'
+    - include: '#parens'
+    - include: '#brackets'
+    - include: '#braces'
+    - include: '#angles'
+
+  symbol_literal:
+    match: \'[^']*\'
+    name: constant.language.magma
+
+  string_literal:
+    comment: Strings
+    begin: '"'
+    end: '"'
+    name: string.quoted.double.magma
+    patterns:
+    - match: '\\.'
+      name: constant.character.escape.magma
+    - match: '[^"\\]'
+   
+  number_literal: 
+    comment: Numbers
+    match: '\b([0-9]+)(\.[0-9]+)?([eE][-+]?[0-9]+)?([pP][0-9]+)?\b'
+    name: constant.numeric.magma
+
+  literal:
+    patterns:
+    - include: '#string_literal'
+    - include: '#symbol_literal'
+    - include: '#number_literal'
+
+  other_keyword:
+    comment: Other keywords
+    match: '\b(exists|forall|rep|random|select|else|where|is|by|Self|assigned)\b'
+    name: keyword.other.magma
+
+  print_levels_keyword:
+    match: '(:)\s*(Default|Minimal|Maximal|Magma)\b'
+    captures:
+      '2': {name: keyword.other.magma}
+
+  other_statement_keyword:
+    comment: Other statement-level keywords
+    match: '\b(load|print|printf|fprintf|vprint|vprintf|delete|clear|freeze|quit|exit|import|declare|type|attributes|verbose|time|vtime|read|readi|load|iload|save|restore|local|forward|eval)\b'
+    name: keyword.other.magma
+
+  logical_operator_keyword:
+    comment: Logical operator keywords
+    match: '\b(and|not|or|xor)\b'
+    name: keyword.operator.bool.logical.magma
+
+  comparison_operator_keyword:
+    comment: Comparison operator keywords
+    match: '\b(le|lt|ge|gt|eq|ne|cmpeq|cmpne|in|notin|subset|notsubset|adj|notadj)\b'
+    name: keyword.operator.comparison.magma
+
+  other_operator_keyword:
+    comment: Other operator keywords
+    match: '\b(div|cat|meet|join|diff|sdiff|mod)\b'
+    name: keyword.operator.other.magma
+
+  where_keyword:
+    comment: Where keyword
+    match: '\b(where)\s+([_A-Za-z][_A-Za-z0-9]*)(\s+(is)|\s*(:=))'
+    captures:
+      '1': {name: keyword.other.magma}
+      '2': {name: variable.other.magma}
+      '4': {name: keyword.other.magma}
+      '5': {name: keyword.operator.assignment.magma}
+
+  operator_keyword:
+    patterns:
+    - include: '#logical_operator_keyword'
+    - include: '#comparison_operator_keyword'
+    - include: '#other_operator_keyword'
+
+  arithmetic_operator:
+    comment: Arithmetic operators
+    match: '\+|-|/|\*|\^'
+    name: keyword.operator.arithmetic.magma
+
+  assignment_statement:
+    comment: Assignment statement
+    # match: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s`]*?)?\s*((\b(div|cat|meet|join|mod|or|and)|(\+|-|/|\*|^)|)(:=))'
+    begin: '([_A-Za-z][\[\]_A-Za-z0-9,<>\s`]*?)?\s*((\b(div|cat|meet|join|mod|or|and|xor)|(\+|-|/|\*|^)|)(:=))'
+    end: ';'
+    beginCaptures:
+      '1':
+        name: variable.other.magma
+      '2':
+        name: keyword.operator.assignment.magma
+    patterns:
+    - include: '#expression'
+
+  other_operator:
+    comment: Other operators
+    match: '#|&|`|!|@|@@|\.|\.\.|\.\.\.|~'
+    name: keyword.operator.other.magma
+
+  operator:
+    patterns:
+    - include: '#operator_keyword'
+    - include: '#arithmetic_operator'
+    - include: '#other_operator'
+
+  constant:
+    comment: Constants
+    match: '\b(true|false)\b'
+    name: constant.language.word_like.magma
+
+  func_constructor:
+    begin: '\b(func|proc)\s*(?=<)'
+    end: '(?!\s*(<|\|))(?=.)\s*'
+    beginCaptures:
+      '1': {name: keyword.other.magma}
+    patterns:
+    - include: '#func_constructor_args'
+    - include: '#constructor_body'
+
+  func_constructor_args:
+    begin: '<\s*'
+    end: '(?=\|\s*)|>\s*'
+    patterns:
+    - include: '#paramname'
+
+  recformat_constructor:
+    begin: '\b(recformat)\s*(?=<)'
+    end: '(?!\s*(<|\|))(?=.)\s*'
+    beginCaptures:
+      '1': {name: keyword.other.magma}
+    patterns:
+    - include: '#recformat_constructor_args'
+
+  recformat_constructor_args:
+    begin: '<\s*'
+    end: '>\s*'
+    patterns:
+    - include: '#comment'
+    - match: '\b([_A-Za-z][_A-Za-z0-9]*)\s*:\s*([_A-Za-z][_A-Za-z0-9]*)\s*(?=$|,|>|//|/\*)'
+      captures:
+        '2': {name: entity.name.class.magma}
+    - begin: '\b([_A-Za-z][_A-Za-z0-9]*)\s*:'
+      end: '(?=$|,|>)'
+      patterns:
+      - include: '#expression'
+    - match: '\b([_A-Za-z][_A-Za-z0-9]*)\s*(?=$|,|>|//|/*)'
+
+  rec_constructor:
+    begin: '\b(rec)\s*(?=<)'
+    end: '(?!\s*(<|\|))(?=.)\s*'
+    beginCaptures:
+      '1': {name: keyword.other.magma}
+    patterns:
+    - include: '#rec_constructor_args'
+    - include: '#rec_constructor_body'
+
+  rec_constructor_body:
+    begin: '\|\s*'
+    end: '>\s*'
+    patterns:
+    - include: '#comment'
+    - begin: '\b([_A-Za-z][_A-Za-z0-9]*)\s*(:=)'
+      end: '(?=$|,|>)'
+      beginCaptures:
+        '1': {name: variable.parameter.magma}
+        '2': {name: keyword.operator.magma}
+      patterns:
+      - include: '#expression'
+
+  rec_constructor_args:
+    begin: '(?=<)'
+    end: '(?=\|\s*)|>\s*'
+    patterns:
+    - match: '<\s*([_A-Za-z][_A-Za-z0-9]*)\s*(?=\||>|$)'
+      captures:
+        '1': {name: entity.name.class.magma}
+    - begin: '<'
+      end: '(?=\||>)'
+      patterns:
+      - include: '#expression'
+
+  constructor_args:
+    begin: '<\s*'
+    end: '(?=\|\s*)|>\s*'
+    patterns:
+    - include: '#arrow'
+    - include: '#expression'
+
+  constructor_body:
+    begin: '\|\s*'
+    end: '>\s*'
+    patterns:
+    - include: '#mapsto'
+    - include: '#expression'
+
+  arrow:
+    match: '->'
+    name: keyword.operator.magma
+
+  mapsto:
+    match: '([_A-Za-z][_A-Za-z0-9]*)?\s*(:?->)'
+    captures:
+      '1': {name: variable.parameter.magma}
+      '2': {name: keyword.operator.magma}
+
+  other_constructor:
+    comment: Constructors
+    begin: '\b([_A-Za-z]+)\s*(?=<)'
+    end: '(?!\s*(<|\|))(?=.)\s*'
+    beginCaptures:
+      '1':
+        name: keyword.other.magma
+    patterns:
+    - include: '#constructor_args'
+    - include: '#constructor_body'
+
+  constructor:
+    patterns:
+    - include: '#func_constructor'
+    - include: '#rec_constructor'
+    - include: '#recformat_constructor'
+    - include: '#other_constructor'
+
+  expression:
+    patterns:
+    - include: '#comment'
+    - include: '#literal'
+    - include: '#constructor'
+    - include: '#where_keyword'
+    - include: '#print_levels_keyword'
+    - include: '#other_keyword'
+    - include: '#operator'
+    - include: '#constant'
+    - include: '#expression_group'
+
+  for_keyword:
+    comment: Keyword "for"
+    match: '\b(for)\s+([_A-Za-z][_A-Za-z0-9]*)(\s+(in)\b|\s*(:=))'
+    captures:
+      '1':
+        name: keyword.control.magma
+      '2':
+        name: variable.other.magma
+      '4':
+        name: keyword.control.magma
+      '5':
+        name: keyword.operator.assignment.magma
+
+  control_keyword:
+    comment: Control keywords
+    match: '\b(if|end\s+if|else|elif|then|for|by|to|while|end\s+for|end\s+while|do|return|break|continue|raise|assert|assert2|assert3|try|end\s+try|catch|require|requirerange|requirege|error|repeat|until|case|when|end\s+case|default)\b'
+    name: keyword.control.magma
+
+  end_function_keyword:
+    comment: End function definition keywords
+    match: '\b(end\s+)(function|procedure|intrinsic)\b'
+    captures:
+      '1':
+        name: keyword.other.magma
+      '2':
+        name: keyword.other.magma
+
+  block:
+    patterns:
+    - include: '#syscall_statement'
+    - include: '#printf_statement'
+    - include: '#read_statement'
+    - include: '#local_statement'
+    - include: '#forward_statement'
+    - include: '#vprint_statement'
+    - include: '#vtime_statement'
+    - include: '#declare_type_statement'
+    - include: '#declare_attributes_statement'
+    - include: '#declare_verbose_statement'
+    - include: '#for_keyword'
+    - include: '#control_keyword'
+    - include: '#end_function_keyword'
+    - include: '#intrinsic_keyword'
+    - include: '#function_keyword'
+    - include: '#other_statement_keyword'
+    - include: '#assignment_statement'
+    - include: '#expression'
+...

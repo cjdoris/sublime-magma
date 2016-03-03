@@ -1,6 +1,6 @@
 # [PackageDev] target_format: plist, ext: tmLanguage
 ---
-name: Magma Interactive
+name: Magma Interactive (old)
 scopeName: source.interactive.magma
 uuid: 0e4a86ff-1b3f-4489-987f-69b913594e89
 

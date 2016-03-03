@@ -6,9 +6,9 @@
 # - Sprintf
 # - regular expression syntax (with escapes!)
 
-name: Magma (experimental)
+name: Magma
 file_extensions: [magma, mag]
-scope: source.magma-experimental
+scope: source.magma
 
 variables:
   escape_char: \\.

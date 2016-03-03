@@ -5,8 +5,8 @@
 
 # TODO: put a meta scope around output so that it can be easily selected
 
-name: Magma Interactive (experimental)
-scope: source.interactive.magma-experimental
+name: Magma Interactive
+scope: source.interactive.magma
 
 variables:
   escape_char: \\.
@@ -20,7 +20,7 @@ contexts:
 
   main:
     - match: ''
-      push: Packages/Magma/magma-experimental.sublime-syntax
+      push: Packages/Magma/magma.sublime-syntax
       with_prototype:
         - include: help
         - include: debugger

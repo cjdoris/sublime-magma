@@ -1,0 +1,3 @@
+Thank you for installing the Magma package!
+
+If you like code snippets, then you should also try the Magma Snippets package.

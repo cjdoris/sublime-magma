@@ -8,7 +8,7 @@
 		<string>mag</string>
 	</array>
 	<key>name</key>
-	<string>Magma</string>
+	<string>Magma (old)</string>
 	<key>patterns</key>
 	<array>
 		<dict>
@@ -1676,7 +1676,7 @@
 		</dict>
 	</dict>
 	<key>scopeName</key>
-	<string>source.magma</string>
+	<string>source.magma-old</string>
 	<key>uuid</key>
 	<string>86b1670b-7756-4792-bdd1-1392d39d26a4</string>
 </dict>
