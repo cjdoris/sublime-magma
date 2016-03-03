@@ -1,6 +1,7 @@
 %YAML 1.2
 ---
 # TODO:
+# - highlight constructor name if possible
 # - special constructors (rec, recformat, hom, map, etc?)
 # - Sprintf
 # - regular expression syntax (with escapes!)
@@ -67,6 +68,7 @@ variables:
   atat: '@'
   anychar: '.'
   LF_anychar: '(?={{anychar}})'
+  equals: '='
 
 
 contexts:
@@ -265,17 +267,18 @@ contexts:
     - match: '{{constructor_open}}'
       set:
         - constructor_METASCOPE_POP
-        - constructor_operator_2_POP
+        - constructor_operator_AFTER_open_POP
 
   constructor_METASCOPE_POP:
     - meta_scope: meta.operator.constructor.magma
     - include: POP
 
-  constructor_operator_2_POP:
+  constructor_operator_AFTER_open_POP:
     - match: '{{arrow}}'
     - match: '{{mapsto}}'
     - match: '{{bar}}'
     - match: '{{assign}}'
+    - match: '{{colon}}'
     - match: '{{constructor_close}}'
       set: OPT_post_operator_POP
     - include: expression_list
@@ -808,7 +811,7 @@ contexts:
       scope: keyword.operator.arithmetic.magma
 
   other_operator:
-    - match: '\b(div|cat|meet|join|diff|sdiff|mod|by)\b|{{hash}}|{{ampersand}}|{{backtick}}|{{bang}}|{{at}}|{{atat}}|{{dot}}|{{dotdot}}|{{dotdotdot}}|{{tilde}}'
+    - match: '\b(div|cat|meet|join|diff|sdiff|mod|by)\b|{{hash}}|{{ampersand}}|{{backtick}}|{{bang}}|{{at}}|{{atat}}|{{dot}}|{{dotdot}}|{{dotdotdot}}|{{tilde}}|{{equals}}'
       scope: keyword.operator.other.magma
 
   # ASSIGNMENT OR EXPRESSION
@@ -2131,3 +2134,13 @@ contexts:
   history_variable:
     - match: '{{historyvar}}'
       scope: variable.history.magma
+
+  # CONSTRUCTOR
+
+  constructor:
+    - match: '({{identifier}})\s*(<)'
+      captures:
+        1: keyword.other.magma
+      push:
+        - constructor_METASCOPE_POP
+        - constructor_operator_AFTER_open_POP
