@@ -78,7 +78,7 @@ contexts:
 
             - match: '\b(print|p)\b'
               scope: keyword.other.magma.debug
-              set: Packages/Magma/magma-experimental.sublime-syntax
+              set: Packages/Magma/magma.sublime-syntax
               with_prototype:
                 - match: '$'
                   pop: true
