@@ -412,6 +412,16 @@ myiset := {@ComplexField() | 1,2,3,4,5@};
 ///                                    ^ meta.expression.iset
 ///                                     ^ -meta.expression.iset
 
+mylist := [*1, 2, 3, 4, 5*];
+///       ^ meta.expression.list
+///                       ^ meta.expression.list
+///                        ^ -meta.expression.list
+
+myfset := {! x in Stuff() | x lt 12 !};
+///       ^ meta.expression.fset
+///                                  ^ meta.expression.fset
+///                                   ^ -meta.expression.fset
+
 t := <x in X, false, 12>;
 ///  ^ meta.expression.tuple
 ///     ^ keyword.operator

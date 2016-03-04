@@ -28,8 +28,10 @@ variables:
   mset_close: '\*\}'
   list_open: '\[\*'
   list_close: '\*\]'
-  set_open: '\{(?![@\*])'
-  set_close: '(?<![@\*])\}'
+  set_open: '\{(?![@\*!])'
+  set_close: '(?<![@\*!])\}'
+  fset_open: '\{!'
+  fset_close: '!\}'
   bar: '\|'
   tuple_open: '<'
   tuple_close: '>'
@@ -158,6 +160,7 @@ contexts:
     - include: boolean_literal
 
   aggregate:
+    - include: fset
     - include: mset
     - include: iset
     - include: set
@@ -1982,6 +1985,34 @@ contexts:
       pop: true
     - include: expression
 
+  # FORMAL SET {!!}
+  fset:
+    - match: '{{fset_open}}'
+      set:
+        - OPT_post_operator_POP
+        - fset_METASCOPE_POP
+        - fset_AT_quantifier_POP
+
+  fset_METASCOPE_POP:
+    - meta_scope: meta.expression.fset.magma
+    - include: POP
+
+  fset_AT_quantifier_POP:
+    - match: '{{identifier}}'
+      scope: variable.other.magma
+      set:
+        - match: '\bin\b'
+          scope: keyword.other.magma
+          set:
+          - match: '{{bar}}'
+            set:
+              - match: '{{fset_close}}'
+                pop: true
+              - include: expression
+          - match: '{{fset_close}}'
+            pop: true
+          - include: expression
+    - include: illegal
 
   # FORALL
 
