@@ -1577,7 +1577,7 @@ contexts:
       set:
         - match: '{{colon}}'
           set: case_body_POP
-        - include: expression
+        - include: expression_list
     - match: '\belse\b'
       scope: keyword.other.magma
       set: case_body_POP
