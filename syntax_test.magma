@@ -329,15 +329,18 @@ continue foo_bar;
 
 case Sign(x):
 /// <- keyword.other
-when 1:
+when 1, 2, 3:
 /// <- keyword.other
   print x, "is positive";
-when -1:
+when -1, -2, -3:
 /// <- keyword.other
   print x, "is negative";
-else
+when 0:
 /// <- keyword.other
   print x, "is zero";
+else
+/// <- keyword.other
+  assert false;
 end case;
 /// <- keyword.other
 /// ^ keyword.other
