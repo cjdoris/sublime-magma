@@ -22,6 +22,8 @@ variables:
   colon: ':(?![:=])'
   seq_open: '\['
   seq_close: '\]'
+  lseq_open: '\\\['
+  lseq_close: '\]'
   iset_open: '\{@'
   iset_close: '@\}'
   mset_open: '\{\*'
@@ -160,6 +162,7 @@ contexts:
     - include: boolean_literal
 
   aggregate:
+    - include: lseq
     - include: fset
     - include: mset
     - include: iset
@@ -570,6 +573,13 @@ contexts:
       push:
         - statement_METASCOPE_POP
         - expression_list_statement_POP
+        - OPT_if_POP
+
+  OPT_if_POP:
+    - match: '\bif\b'
+      scope: keyword.other.magma
+      pop: true
+    - include: POP
 
   # IMPORT
 
@@ -1769,6 +1779,64 @@ contexts:
 
   seq_AT_condition_POP:
     - match: '{{seq_close}}'
+      pop: true
+    - include: expression
+
+# LSEQ (literal sequence) []
+
+  lseq:
+    - match: '{{lseq_open}}'
+      push:
+        - OPT_post_operator_POP
+        - lseq_METASCOPE_POP
+        - lseq_AT_universe_or_value_POP
+
+  lseq_METASCOPE_POP:
+    - meta_scope: meta.expression.lseq.magma
+    - include: POP
+
+  lseq_AT_universe_or_value_POP:
+    - match: '{{bar}}'
+      set: lseq_AT_value_POP
+    - match: '{{colon}}'
+      set: lseq_AT_quantifier_POP
+    - match: '{{comma}}'
+      set: lseq_AT_list_POP
+    - match: '{{lseq_close}}'
+      pop: true
+    - include: expression
+
+  lseq_AT_value_POP:
+    - match: '{{colon}}'
+      set: lseq_AT_quantifier_POP
+    - match: '{{lseq_close}}'
+      pop: true
+    - match: '{{comma}}'
+      set: lseq_AT_list_POP
+    - include: expression
+
+  lseq_AT_list_POP:
+    - match: '{{lseq_close}}'
+      pop: true
+    - include: expression_list
+
+  lseq_AT_quantifier_POP:
+    - match: ''
+      set:
+        - lseq_AT_next_quantifier_POP
+        - REQ_quantifier_POP
+
+  lseq_AT_next_quantifier_POP:
+    - match: '{{comma}}'
+      set: lseq_AT_quantifier_POP
+    - match: '{{bar}}'
+      set: lseq_AT_condition_POP
+    - match: '{{lseq_close}}'
+      pop: true
+    - include: expression
+
+  lseq_AT_condition_POP:
+    - match: '{{lseq_close}}'
       pop: true
     - include: expression
 

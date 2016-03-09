@@ -394,6 +394,11 @@ myseq := [Integers() | 1,2,3,4,5];
 ///                             ^ meta.expression.seq
 ///                              ^ -meta.expression.seq
 
+mylseq := \[1,2,3,4,5];
+///       ^ meta.expression.lseq
+///                  ^ meta.expression.lseq
+///                   ^ -meta.expression.lseq
+
 mymset := {* y : y in blah *};
 ///       ^ meta.expression.mset
 ///                ^ keyword.other
