@@ -352,6 +352,7 @@ contexts:
       set:
         - meta_scope: meta.operator.backtick.magma
         - match: '{{identifier}}'
+          scope: variable.other.magma
           set: OPT_post_operator_POP
         - include: illegal
 
@@ -487,9 +488,10 @@ contexts:
     - match: '\bdelete\b'
       scope: keyword.other.magma
       push:
-        - statement_METASCOPE_POP
-        - REQ_blank_statement_POP
-        - REQ_identifier_POP
+        - meta_scope: statement.delete.magma
+        - match: '{{semicolon}}'
+          pop: true
+        - include: expression
 
   REQ_identifier_POP:
     - match: '{{identifier}}'
@@ -1007,6 +1009,7 @@ contexts:
 
   for_range_POP:
     - match: '{{identifier}}'
+      scope: variable.parameter.magma
       set:
         - match: '\bin\b'
           scope: keyword.other.magma
@@ -1207,14 +1210,15 @@ contexts:
       push:
         - break_METASCOPE_POP
         - REQ_blank_statement_POP
-        - OPT_ident_POP
+        - OPT_param_POP
 
   break_METASCOPE_POP:
     - meta_scope: meta.statement.break.magma
     - include: POP
 
-  OPT_ident_POP:
+  OPT_param_POP:
     - match: '{{identifier}}'
+      scope: variable.parameter.magma
       pop: true
     - match: '{{LF_anychar}}'
       pop: true
@@ -1227,7 +1231,7 @@ contexts:
       push:
         - continue_METASCOPE_POP
         - REQ_blank_statement_POP
-        - OPT_ident_POP
+        - OPT_param_POP
 
   continue_METASCOPE_POP:
     - meta_scope: meta.statement.continue.magma
