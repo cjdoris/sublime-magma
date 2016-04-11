@@ -178,6 +178,10 @@ contexts:
       scope: invalid.illegal.magma
 
   POP:
+    - match: '{{LF_anychar}}'
+      pop: true
+
+  POPNOW:
     - match: ''
       pop: true
 
@@ -872,13 +876,13 @@ contexts:
 
   history_other_METASCOPE_POP:
     - meta_scope: meta.statement.history.other.magma
-    - include: POP
+    - include: POPNOW
 
   OPT_integer_POP:
     - match: '{{integer}}'
       scope: constant.numeric.magma
       pop: true
-    - include: POP
+    - include: POPNOW
 
   REQ_eol_POP:
     - match: '$'
