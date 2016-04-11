@@ -330,6 +330,10 @@ contexts:
             - match: '{{paren_close}}'
               set: OPT_post_operator_POP
             - include: expression
+        - match: '{{comma}}'
+          set: REQ_function_call_optional_arguments_POP
+        - match: '{{paren_close}}'
+          set: OPT_post_operator_POP
         - include: illegal
     - include: illegal
 
@@ -499,6 +503,7 @@ contexts:
 
   REQ_identifier_POP:
     - match: '{{identifier}}'
+      scope: variable.other.magma
       pop: true
     - include: illegal
 
@@ -599,6 +604,18 @@ contexts:
 
   ident_list_statement_POP:
     - match: '{{identifier}}'
+      scope: variable.other.magma
+      set:
+        - match: '{{semicolon}}'
+          pop: true
+        - match: '{{comma}}'
+          set: ident_list_statement_POP
+        - include: illegal
+    - include: illegal
+
+  type_list_statement_POP:
+    - match: '{{identifier}}'
+      scope: entity.name.class.magma
       set:
         - match: '{{semicolon}}'
           pop: true
@@ -912,7 +929,7 @@ contexts:
     - match: '\btype\b'
       scope: keyword.other.magma
       set:
-        - OPT_colon_ident_list_statement_POP
+        - OPT_colon_type_list_statement_POP
         - REQ_type_and_elttype_name_POP
 
   declare_attributes_POP:
@@ -978,6 +995,13 @@ contexts:
   OPT_colon_ident_list_statement_POP:
     - match: '{{colon}}'
       set: ident_list_statement_POP
+    - match: '{{semicolon}}'
+      pop: true
+    - include: illegal
+
+  OPT_colon_type_list_statement_POP:
+    - match: '{{colon}}'
+      set: type_list_statement_POP
     - match: '{{semicolon}}'
       pop: true
     - include: illegal
