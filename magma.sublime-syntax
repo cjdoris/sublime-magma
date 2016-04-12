@@ -45,6 +45,7 @@ variables:
   constructor_open: '{{tuple_open}}'
   constructor_close: '{{tuple_close}}'
   backtick: '`'
+  doublebacktick: '``'
   string_open: '"'
   string_close: '"'
   dot: '\.(?![.])'
@@ -261,8 +262,8 @@ contexts:
   OPT_post_operator_POP:
     - include: function_call_operator_POP
     - include: indexing_operator_POP
+    - include: doublebacktick_operator_POP
     - include: backtick_operator_POP
-    - include: doublequote_operator_POP
     - include: dot_operator_POP
     - include: constructor_operator_POP
     - include: arithmetic_post_operator_POP
@@ -364,9 +365,9 @@ contexts:
           set: OPT_post_operator_POP
         - include: illegal
 
-  doublequote_operator_POP:
-    - match: '"'
-      scope: keyword.operator.magma meta.operator.doublequote.magma
+  doublebacktick_operator_POP:
+    - match: '{{doublebacktick}}'
+      scope: keyword.operator.magma meta.operator.doublebacktick.magma
       pop: true
 
   dot_operator_POP:
