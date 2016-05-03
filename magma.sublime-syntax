@@ -1747,6 +1747,8 @@ contexts:
         - match: '\bin\b'
           scope: keyword.other.magma
           pop: true
+        - match: ','
+          set: REQ_quantifier_POP
         - include: illegal
 
   REQ_quantifier_POP:
