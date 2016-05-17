@@ -5,6 +5,8 @@
 # - special constructors (rec, recformat, hom, map, etc?)
 # - Sprintf
 # - regular expression syntax (with escapes!)
+# 
+# NOTE: Constructors (things like "sub<G|g,h>") are weird. Generally the names are not reserved words, and it is ok to have a variable called "func", BUT you can't do "func<x> := PolynomialRing(Integers());", it is a syntax error. My strategy is that whenever I see "name<" on a line, where name is in a list of known constructor names, then "name" is highlighted as a keyword. Otherwise, "name" is highlighted as a normal variable.
 
 name: Magma
 file_extensions: [magma, mag]
@@ -16,6 +18,7 @@ variables:
   bad_format_char: '%'
   base_identifier: '\b[a-zA-Z_][a-zA-Z_0-9]*\b'
   reserved_word: '\b(_|adj|and|assert|assert2|assert3|assigned|break|by|case|cat|catch|clear|cmpeq|cmpne|continue|declare|default|delete|diff|div|do|elif|else|end|eq|error|eval|exists|exit|false|for|forall|forward|fprintf|freeze|function|ge|gt|if|iload|import|in|intrinsic|is|join|le|load|local|lt|meet|mod|ne|not|notadj|notin|notsubset|or|print|printf|procedure|quit|random|read|readi|rep|repeat|require|requirege|requirerange|restore|return|save|sdiff|select|subset|then|time|to|true|try|until|vprint|vprintf|vtime|when|where|while|xor)\b'
+  constructor_name: '\b(car|elt|cop|recformat|rec|map|pmap|hom|ideal|quo|loc|comp|ext|sub|PermutationGroup|Group|ncl|MatrixGroup|PolycyclicGroup|AbelianGroup|iso|Semigroup|Monoid|lideal|rideal|Algebra|AssociativeAlgebra|LieAlgebra|FPAlgebra|MatrixAlgebra|GroupAlgebra|QuaternionAlgebra|LieAlgebra|AffineAlgebra|FiniteProjectivePlane|FiniteAffinePlane|IncidenceStructure|NearLinearSpace|LinearSpace|Design|Graph|Digraph|MultiGraph|MultiDigraph|Network|LinearCode|AdditiveCode|func|proc)\b'
   identifier: '(?!{{reserved_word}}){{base_identifier}}'
   historyvar: '\$[0-9]+\b'
   comma: ','
@@ -40,6 +43,7 @@ variables:
   paren_open: '\('
   paren_close: '\)'
   assign: ':='
+  opassign: '(\b(div|cat|meet|join|diff|sdiff|mod|or|and|xor)|(\+|-|/|\*|^))?({{assign}})'
   index_open: '{{seq_open}}'
   index_close: '{{seq_close}}'
   constructor_open: '{{tuple_open}}'
@@ -684,13 +688,13 @@ contexts:
 
   eval_expression:
     - match: '\beval\b'
-      scope: keyword.other.magma
+      scope: keyword.operator.magma
 
   # ASSIGNED
 
   assigned_expression:
     - match: '\bassigned\b'
-      scope: keyword.other.magma
+      scope: keyword.operator.magma
 
   # LOAD
 
@@ -864,7 +868,7 @@ contexts:
     - include: POP
 
   assignment_or_expression_statement_2_POP:
-      - match: '(\b(div|cat|meet|join|diff|sdiff|mod|or|and|xor)|(\+|-|/|\*|^))?({{assign}})'
+      - match: '{{opassign}}'
         scope: keyword.operator.assignment.magma
         set: expression_statement_POP
       - include: print_level_POP
@@ -1611,6 +1615,15 @@ contexts:
     - include: POP
 
   case_body_POP:
+    - match: '\bwhen\b'
+      scope: keyword.other.magma
+      set:
+        - match: '{{colon}}'
+          set: case_body_rest_POP
+        - include: expression_list
+    - include: illegal
+
+  case_body_rest_POP:
     - match: '\bend\b'
       scope: keyword.other.magma
       set:
@@ -1618,15 +1631,11 @@ contexts:
           scope: keyword.other.magma
           set: REQ_blank_statement_POP
         - include: illegal
-    - match: '\bwhen\b'
-      scope: keyword.other.magma
-      set:
-        - match: '{{colon}}'
-          set: case_body_POP
-        - include: expression_list
+    - match: '(?=\bwhen\b)'
+      set: case_body_POP
     - match: '\belse\b'
       scope: keyword.other.magma
-      set: case_body_POP
+      set: case_body_rest_POP
     - include: statement
 
   case_args_POP:
@@ -2121,7 +2130,7 @@ contexts:
 
   forall_expression:
     - match: '\bforall\b'
-      scope: keyword.other.magma
+      scope: keyword.operator.magma
       push:
         - forall_METASCOPE_POP
         - REQ_quantified_set_POP
@@ -2228,7 +2237,7 @@ contexts:
 
   select_expression:
     - match: '\bselect\b'
-      scope: keyword.other.magma
+      scope: keyword.operator.magma
       push:
         - select_METASCOPE_POP
         - select_expression_2_POP
@@ -2239,7 +2248,7 @@ contexts:
 
   select_expression_2_POP:
     - match: '\belse\b'
-      scope: keyword.other.magma
+      scope: keyword.operator.magma
       pop: true
     - include: expression
 
@@ -2272,7 +2281,7 @@ contexts:
   # CONSTRUCTOR
 
   constructor:
-    - match: '({{identifier}})\s*(<)'
+    - match: '({{constructor_name}})\s*(<)'
       captures:
         1: keyword.other.magma
       push:
