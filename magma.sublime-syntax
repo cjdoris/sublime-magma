@@ -151,7 +151,7 @@ contexts:
     - include: random_expression
     - include: rep_expression
     - include: case_expression
-    - include: sprintf_call
+    # - include: sprintf_call
     - include: parentheses
     - include: aggregate
     - include: constructor
@@ -1413,7 +1413,6 @@ contexts:
     - include: tuple_type_POP
     - include: setseq_type_POP
     - include: simple_type_POP
-    - include: sequence_type_POP
     - include: set_type_POP
     - include: seq_type_POP
 
