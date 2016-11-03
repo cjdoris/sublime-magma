@@ -357,7 +357,7 @@ contexts:
         - meta_scope: meta.operator.indexing.magma
         - match: '{{index_close}}'
           set: OPT_post_operator_POP
-        - include: expression
+        - include: expression_list
 
   backtick_operator_POP:
     - match: '{{backtick}}'
