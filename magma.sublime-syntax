@@ -79,6 +79,7 @@ variables:
   anychar: '.'
   LF_anychar: '(?={{anychar}})'
   equals: '='
+  vararg: '\.\.\.'
 
 
 contexts:
@@ -1204,6 +1205,14 @@ contexts:
         - match: '{{colon}}'
           set: REQ_function_optional_arguments_POP
         - include: illegal
+    - match: '{{vararg}}'
+      scope: keyword.other.magma
+      set:
+        - match: '{{paren_close}}'
+          pop: true
+        - match: '{{colon}}'
+          set: REQ_function_optional_arguments_POP
+        - include: illegal
     - include: illegal
 
   REQ_function_optional_arguments_POP:
@@ -1347,6 +1356,14 @@ contexts:
             - match: '{{colon}}'
               set: REQ_procedure_optional_arguments_POP
             - include: illegal
+        - include: illegal
+    - match: '{{vararg}}'
+      scope: keyword.other.magma
+      set:
+        - match: '{{paren_close}}'
+          pop: true
+        - match: '{{colon}}'
+          set: REQ_procedure_optional_arguments_POP
         - include: illegal
     - include: illegal
 
@@ -2137,7 +2154,7 @@ contexts:
 
   forall_expression:
     - match: '\bforall\b'
-      scope: keyword.operator.magma
+      scope: keyword.other.magma
       push:
         - forall_METASCOPE_POP
         - REQ_quantified_set_POP
