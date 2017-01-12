@@ -1,0 +1,6 @@
+Changes:
+* Now supports variadic function and procedure definitions
+* Now supports escaping literal newlines with a backslash
+* Now supports multiple arguments to the indexing operator
+* Fixed a typo so now keyword completions work again
+* Removed some dead code
