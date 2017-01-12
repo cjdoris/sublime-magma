@@ -1,0 +1,15 @@
+Changes:
+
+* Now supports multiple arguments to when statement
+
+* Now supports formal set literals
+
+* Now supports literal sequences
+
+* Now supports error if statement
+
+* Now supports implicitly true optional value in function call parameters
+
+* Better highlighting of some variables
+
+* Bug fixes
