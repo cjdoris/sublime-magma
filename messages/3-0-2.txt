@@ -1,0 +1,7 @@
+Changes:
+
+* Now supports the double-backtick operator
+
+* Now supports multiple variables per quatifier
+
+* Minor scoping changes
