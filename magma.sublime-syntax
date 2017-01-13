@@ -655,7 +655,13 @@ contexts:
       push:
         - statement_METASCOPE_POP
         - expression_list_statement_POP
-        - REQ_identifier_POP
+        - REQ_parameter_POP
+
+  REQ_parameter_POP:
+    - match: '{{identifier}}'
+      scope: variable.parameter.magma
+      pop: true
+    - include: illegal
 
   # READI
 
@@ -665,7 +671,7 @@ contexts:
       push:
         - statement_METASCOPE_POP
         - expression_list_statement_POP
-        - REQ_identifier_POP
+        - REQ_parameter_POP
 
   # LOCAL
 
@@ -675,7 +681,16 @@ contexts:
       push:
         - statement_METASCOPE_POP
         - REQ_blank_statement_POP
-        - REQ_identifier_list_POP
+        - REQ_parameter_list_POP
+
+  REQ_parameter_list_POP:
+    - match: '{{identifier}}'
+      scope: variable.parameter.magma
+      set:
+        - match: '{{comma}}'
+          set: REQ_parameter_list_POP
+        - include: POP
+    - include: illegal
 
   REQ_identifier_list_POP:
     - match: '{{identifier}}'
