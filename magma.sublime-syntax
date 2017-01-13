@@ -675,7 +675,16 @@ contexts:
       push:
         - statement_METASCOPE_POP
         - REQ_blank_statement_POP
-        - REQ_identifier_POP
+        - REQ_identifier_list_POP
+
+  REQ_identifier_list_POP:
+    - match: '{{identifier}}'
+      scope: variable.other.magma
+      set:
+        - match: '{{comma}}'
+          set: REQ_identifier_list_POP
+        - include: POP
+    - include: illegal
 
   # FORWARD
 
