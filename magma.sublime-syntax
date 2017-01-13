@@ -513,7 +513,7 @@ contexts:
         - meta_scope: statement.delete.magma
         - match: '{{semicolon}}'
           pop: true
-        - include: expression
+        - include: expression_list
 
   REQ_identifier_POP:
     - match: '{{identifier}}'
@@ -694,12 +694,21 @@ contexts:
       push:
         - statement_METASCOPE_POP
         - REQ_blank_statement_POP
-        - REQ_function_name_POP
+        - REQ_function_name_list_POP
 
   REQ_function_name_POP:
     - match: '{{identifier}}'
       scope: entity.name.function.function.magma
       pop: true
+    - include: illegal
+
+  REQ_function_name_list_POP:
+    - match: '{{identifier}}'
+      scope: entity.name.function.function.magma
+      set:
+        - match: '{{comma}}'
+          set: REQ_function_name_list_POP
+        - include: POP
     - include: illegal
 
   # EVAL
