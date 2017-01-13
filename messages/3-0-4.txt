@@ -1,0 +1,5 @@
+Changes:
+
+* Local, forward and delete statements now support multiple arguments
+
+* Read, readi and local statements now highlight first argument as a parameter
