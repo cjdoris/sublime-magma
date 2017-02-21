@@ -298,10 +298,11 @@ contexts:
     - include: POP
 
   constructor_operator_AFTER_open_POP:
-    - match: '{{arrow}}'
     - match: '{{mapsto}}'
+      scope: keyword.operator.other.magma
     - match: '{{bar}}'
     - match: '{{assign}}'
+      scope: keyword.operator.other.magma
     - match: '{{colon}}'
     - match: '{{constructor_close}}'
       set: OPT_post_operator_POP
@@ -894,7 +895,7 @@ contexts:
       scope: keyword.operator.arithmetic.magma
 
   other_operator:
-    - match: '\b(div|cat|meet|join|diff|sdiff|mod|by)\b|{{hash}}|{{ampersand}}|{{backtick}}|{{bang}}|{{at}}|{{atat}}|{{dot}}|{{dotdot}}|{{dotdotdot}}|{{tilde}}|{{equals}}'
+    - match: '\b(div|cat|meet|join|diff|sdiff|mod|by)\b|{{hash}}|{{ampersand}}|{{backtick}}|{{bang}}|{{at}}|{{atat}}|{{dot}}|{{dotdot}}|{{dotdotdot}}|{{tilde}}|{{equals}}|{{arrow}}'
       scope: keyword.operator.other.magma
 
   # ASSIGNMENT OR EXPRESSION
