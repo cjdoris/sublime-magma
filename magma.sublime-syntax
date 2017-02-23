@@ -13,6 +13,10 @@ file_extensions: [magma, mag]
 scope: source.magma
 
 variables:
+  whitespace: \s+
+  line_comment: //.*$\n?
+  block_comment_open: /\*
+  block_comment_close: \*/
   escape_char: \\.
   format_char: '%[-]?[0-9]*(\.[0-9]*)?[oOmh]|%\*[oOmh]|%%'
   backslash_eol: \\$\n?
@@ -44,6 +48,7 @@ variables:
   paren_open: '\('
   paren_close: '\)'
   assign: ':='
+  identifier_assign: '({{identifier}})({{whitespace}})?({{assign}})'
   opassign: '(\b(div|cat|meet|join|diff|sdiff|mod|or|and|xor)|(\+|-|/|\*|^))?({{assign}})'
   index_open: '{{seq_open}}'
   index_close: '{{seq_close}}'
@@ -228,17 +233,17 @@ contexts:
       scope: comment.line.magma
 
   whitespace:
-    - match: \s+
+    - match: '{{whitespace}}'
 
   line_comment:
-    - match: //.*$\n?
+    - match: '{{line_comment}}'
       scope: comment.line.double-slash.magma
 
   block_comment:
-    - match: /\*
+    - match: '{{block_comment_open}}'
       push:
         - meta_scope: comment.block.magma
-        - match: \*/
+        - match: '{{block_comment_close}}'
           pop: true
 
   # LITERALS
@@ -302,6 +307,10 @@ contexts:
     - include: POP
 
   constructor_operator_AFTER_open_POP:
+    - match: '{{identifier_assign}}'
+      captures:
+        1: variable.parameter.magma
+        4: keyword.operator.other.magma
     - match: '{{mapsto}}'
       scope: keyword.operator.other.magma
     - match: '{{bar}}'
