@@ -65,7 +65,11 @@ variables:
   arithmetic_operator: '({{plus}}|{{minus}}|{{multiply}}|{{divide}}|{{power}})(?![:\}])'
   tilde: '~'
   symbol: "'[^']*'"
-  integer: '\b[0-9]+\b'
+  dec_integer: '\b[0-9]+\b'
+  hex_integer: '\b0[xX][0-9A-Fa-f]+\b'
+  integer: '{{dec_integer}}|{{hex_integer}}'
+  real_number: '[+-]?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?([pP][0-9]+)?\b'
+  number: '{{real_number}}|{{integer}}'
   argtype: '::'
   setseq_open: '{{set_open}}{{seq_open}}'
   setseq_close: '{{seq_close}}{{set_close}}'
@@ -249,7 +253,7 @@ contexts:
           set: OPT_post_operator_POP
 
   number_literal:
-    - match: '[+-]?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?([pP][0-9]+)?\b'
+    - match: '{{number}}'
       scope: constant.numeric.magma
       push: OPT_post_operator_POP
 
