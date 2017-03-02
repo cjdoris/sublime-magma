@@ -2,7 +2,7 @@
 ---
 name: Magma Spec
 file_extensions: [spec]
-scope: source.magma.spec
+scope: source.magma-spec
 
 variables:
   whitespace: '\s+'
@@ -30,18 +30,18 @@ contexts:
 
   file:
     - match: '{{filename}}$'
-      scope: variable.parameter.magma.spec
+      scope: variable.parameter.magma-spec
 
   link:
     - match: '(\+)\s*({{filename}})$'
       captures:
-        1: keyword.other.magma.spec
-        2: entity.name.function.magma.spec
+        1: keyword.other.magma-spec
+        2: entity.name.function.magma-spec
 
   directory:
     - match: '({{filename}})?\s*({{dir_start}})\s*$'
       captures:
-        1: entity.name.class.magma.spec
+        1: entity.name.class.magma-spec
       push:
         - include: link
         - include: directory
@@ -52,6 +52,6 @@ contexts:
 
   illegal:
     - match: '{{anychar}}'
-      scope: invalid.illegal.magma.spec
+      scope: invalid.illegal.magma-spec
 
   
