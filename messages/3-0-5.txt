@@ -1,0 +1,15 @@
+Changes to syntax:
+
+* The arrow '->' (usually seen in map constructs) is now a proper operator
+
+* Supports hexadecimal integer literals
+
+* Constructors now support parameters better
+
+* New syntax file for 'spec' files (old version still available as 'Magma Spec (old)')
+
+Changes to keybindings:
+
+* Adds keybindings to '<', '>' and 'backspace' so that typing tuples behaves similar to how '()', '{}' and '[]' already behave in Sublime. Similarly adds keybindings to '*', '@' and '!' so that typing lists, multisets, indexed sets and multisets behaves nicely.
+
+* Typing ';' on a blank line or immediately after ':=' now inserts a ';' but puts the cursor before it, assuming that the user is about to type an expression. Typing ';' immediately before a ';' moves through it, much like typing ')' before ')' moves through it.
