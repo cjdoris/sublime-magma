@@ -1,8 +1,7 @@
 # [PackageDev] target_format: plist, ext: tmLanguage
 ---
-name: Magma Spec
+name: Magma Spec (old)
 scopeName: source.magma.spec
-fileTypes: [spec]
 uuid: 39aa633c-e4c0-460f-84c7-a392bddb18c9
 
 patterns:

@@ -2,12 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>fileTypes</key>
-	<array>
-		<string>spec</string>
-	</array>
 	<key>name</key>
-	<string>Magma Spec</string>
+	<string>Magma Spec (old)</string>
 	<key>patterns</key>
 	<array>
 		<dict>
