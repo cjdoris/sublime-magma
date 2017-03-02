@@ -2195,6 +2195,7 @@ contexts:
           - match: '{{fset_close}}'
             pop: true
           - include: expression
+        - include: illegal
     - include: illegal
 
   # FORALL
