@@ -1,0 +1,4 @@
+{
+  // When true, typing a semicolon on a blank line or immediately after ":=" will put the cursor before the inserted semicolon. Typing a semicolon immediately before a semicolon will simply move through it, just like typing ")" immediately before ")" moves through that.
+  "magma_intelligent_semicolon": true
+}
