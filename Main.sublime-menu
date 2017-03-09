@@ -16,20 +16,27 @@
                         "children":
                         [
                             {
-                                "command": "open_file", "args":
-                                {
+                                "command": "open_file",
+                                "args": {
                                     "file": "${packages}/Magma/magma.sublime-settings"
                                 },
                                 "caption": "Settings – Default"
                             },
                             {
-                                "command": "open_file", "args":
-                                {
+                                "command": "open_file",
+                                "args": {
                                     "file": "${packages}/User/magma.sublime-settings"
                                 },
                                 "caption": "Settings – User"
                             },
-                            { "caption": "-" }
+                            { "caption": "-" },
+                            {
+                                "command": "open_file",
+                                "args": {
+                                    "file": "${packages}/Magma/Default.sublime-keymap"
+                                },
+                                "caption": "Key Bindings – Default"
+                            }
                         ]
                     }
                 ]
