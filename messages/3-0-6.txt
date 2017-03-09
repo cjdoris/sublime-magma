@@ -1,0 +1,5 @@
+Changes:
+
+* Added a menu item for keybindings (Preferences > Package Settings > Magma)
+
+* Bugfix, new semicolon functionality should work properly
