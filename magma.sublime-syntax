@@ -991,7 +991,12 @@ contexts:
       scope: keyword.other.magma
       set:
         - OPT_colon_type_list_statement_POP
+        - declare_type_declaration_METASCOPE_POP
         - REQ_type_and_elttype_name_POP
+
+  declare_type_declaration_METASCOPE_POP:
+    - meta_scope: meta.declaration.declare.type.magma
+    - include: POP
 
   declare_attributes_POP:
     - match: '\battributes\b'
@@ -1007,7 +1012,12 @@ contexts:
         - REQ_semicolon_POP
         - REQ_integer_literal_POP
         - REQ_comma_POP
+        - declare_verbose_declaration_METASCOPE_POP
         - REQ_verbosity_name_POP
+
+  declare_verbose_declaration_METASCOPE_POP:
+    - meta_scope: meta.declaration.declare.verbose.magma
+    - include: POP
 
   REQ_semicolon_POP:
     - match: '{{semicolon}}'
@@ -1205,6 +1215,7 @@ contexts:
         - function_METASCOPE_POP
         - REQ_blank_statement_POP
         - function_body_POP
+        - function_declaration_METASCOPE_POP
         - REQ_function_arguments_POP
         - OPT_function_name_POP
 
@@ -1225,6 +1236,10 @@ contexts:
 
   function_METASCOPE_POP:
     - meta_scope: meta.statement.function.magma
+    - include: POP
+
+  function_declaration_METASCOPE_POP:
+    - meta_scope: meta.declaration.function.magma
     - include: POP
 
   function_expression_METASCOPE_POP:
@@ -1343,6 +1358,7 @@ contexts:
         - procedure_METASCOPE_POP
         - REQ_blank_statement_POP
         - procedure_body_POP
+        - procedure_declaration_METASCOPE_POP
         - REQ_procedure_arguments_POP
         - OPT_procedure_name_POP
 
@@ -1360,6 +1376,10 @@ contexts:
 
   procedure_METASCOPE_POP:
     - meta_scope: meta.statement.procedure.magma
+    - include: POP
+
+  procedure_declaration_METASCOPE_POP:
+    - meta_scope: meta.declaration.procedure.magma
     - include: POP
 
   OPT_procedure_name_POP:
@@ -1437,11 +1457,16 @@ contexts:
         - intrinsic_body_POP
         - REQ_intrinsic_documentation_POP
         - OPT_intrinsic_return_type_POP
+        - intrinsic_declaration_METASCOPE_POP
         - REQ_intrinsic_arguments_POP
         - REQ_intrinsic_name_POP
 
   intrinsic_METASCOPE_POP:
     - meta_scope: meta.statement.intrinsic.magma
+    - include: POP
+
+  intrinsic_declaration_METASCOPE_POP:
+    - meta_scope: meta.declaration.intrinsic.magma
     - include: POP
 
   REQ_intrinsic_name_POP:
