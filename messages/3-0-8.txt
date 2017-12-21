@@ -1,0 +1,3 @@
+Changes:
+
+* Now has more useful symbols in the Goto Anything list, including the prototype of intrinsics, functions and procedures, as well as type and verbose declarations
