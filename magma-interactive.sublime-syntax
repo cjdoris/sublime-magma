@@ -37,7 +37,7 @@ contexts:
     - match: '^[a-z\|]*> '
       scope: interactive.prompt.magma
 
-    - match: '^(\[PC\] )?((User|Runtime) error[^*]*:).*$'
+    - match: '^(\[PC\] )?((User|Runtime) error[^*:]*:).*$'
       captures:
         0: interactive.output.magma
         2: interactive.output.error.magma
