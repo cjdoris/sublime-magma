@@ -1,0 +1,4 @@
+Changes:
+
+* Improved formatting of symbols including references
+* Improved highlighting of errors
