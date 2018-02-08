@@ -648,7 +648,7 @@ contexts:
         - match: '{{semicolon}}'
           pop: true
         - match: '{{comma}}'
-          set: ident_list_statement_POP
+          set: type_list_statement_POP
         - include: illegal
     - include: illegal
 
