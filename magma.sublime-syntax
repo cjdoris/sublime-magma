@@ -225,6 +225,7 @@ contexts:
     - include: whitespace
 
   comment:
+    - include: doc_comment
     - include: line_comment
     - include: block_comment
 
@@ -234,6 +235,65 @@ contexts:
 
   whitespace:
     - match: '{{whitespace}}'
+
+  # a "doc_comment" is a comment starting with 3 (but not 4) slashes, and is interpreted the same as by the "magdoc" documentation generator (https://cjdoris.github.io/magdoc).
+  doc_comment:
+    - match: ///(?!/)
+      embed: doc_comment_content
+      escape: $\n?
+      embed_scope: comment.block.documentation.magma
+      # you'd think the meta_scope in doc_comment_content would do this, but it doesn't seem to apply to the escape pattern (maybe this is a bug?)
+      escape_captures:
+        0: comment.line.double-slash.magma
+
+  # we highlight sectioning commands, as well as some other keyword commands (param, hide, ditto, etc.) and anything else is treated as text
+  doc_comment_content:
+    - meta_scope: comment.line.double-slash.magma
+    - match: (\#+)(.*)
+      captures:
+        0: meta.declaration.section.magma # this means the section will appear in the list when you do Ctrl-R
+        2: comment.block.documentation.text.section.magma
+    - match: (param)\s+(\S+)(:=\S+)?
+      captures:
+        1: comment.block.documentation.keyword.other.magma
+      set: doc_comment_text
+    - match: (priority)\s+(-?[0-9]+)
+      captures:
+        1: comment.block.documentation.keyword.other.magma
+      set: doc_comment_text
+    - match: (label|sec)\s+(\S+)
+      captures:
+        1: comment.block.documentation.keyword.other.magma
+      set: doc_comment_text
+    - match: (hide|hide-all|hide-none|ditto|toc)(?=$|\s)
+      captures:
+        1: comment.block.documentation.keyword.other.magma
+      set: doc_comment_text
+    - match: (?=.)
+      set: doc_comment_text
+
+  # the text part of a doc comment is actually markdown, and we highlight some common markdown elements
+  doc_comment_text:
+    - match: (?<!`)(`+)[^`].*?(\1)
+      scope: comment.block.documentation.text.raw.inline.magma
+    - match: \*\*
+      push: doc_comment_text_bold
+    - match: \*
+      push: doc_comment_text_emph
+    - match: .
+      scope: comment.block.documentation.text.magma
+
+  doc_comment_text_emph:
+    - meta_scope: comment.block.documentation.text.italic.magma
+    - match: \*
+      pop: true
+    - include: doc_comment_text
+
+  doc_comment_text_bold:
+    - meta_scope: comment.block.documentation.text.bold.magma
+    - match: \*\*
+      pop: true
+    - include: doc_comment_text
 
   line_comment:
     - match: '{{line_comment}}'
@@ -1626,18 +1686,21 @@ contexts:
     - include: illegal
 
   REQ_intrinsic_documentation_POP:
-    - match: '(\{\s*(")\s*\})'
+    - match: '\{(\s*(")\s*)\}'
       captures:
+        0: comment.block.intrinsic.magma
         1: comment.block.documentation.intrinsic.magma
         2: constant.character.escape.magma
       pop: true
     - match: '\{'
       set:
-        - meta_scope: comment.block.documentation.intrinsic.magma
+        - meta_scope: comment.block.intrinsic.magma
         - match: '\\.'
           scope: constant.character.escape.magma
         - match: '\}'
           pop: true
+        - match: '.'
+          scope: comment.block.documentation.text.magma
     - include: illegal
 
   REQ_intrinsic_optional_argument_list_POP:
